@@ -512,7 +512,7 @@ function colChart(box, o){
 
 // ─── каркас слайда ─────────────────────────────────────────────────────────
 var SLIDES=[], curGroup='';
-var SHOW_CATS=false; // слайды прогноза по категориям пока скрыты
+var SHOW_CATS=false; // слайды прогноза (прогноз и факт, категории) пока скрыты
 function slide(title, sub, build){ SLIDES.push({title:title, sub:sub, build:build, group:curGroup}); }
 function frame(s, idx){
   var sec=document.createElement('section'); sec.className='slide'+(s.group==='Категории'||s.title==='Прогноз и факт: онлайн и офлайн'?' polished':'');
@@ -776,7 +776,7 @@ function pairChart(box, rows){
 
 // 8. Итоги октября по каналам — карточка на каждую метрику
 curGroup='Итоги октября';
-slide('Прогноз и факт: онлайн и офлайн','Эффект повышения цен к базе за октябрь 2026',function(b){
+if(SHOW_CATS) slide('Прогноз и факт: онлайн и офлайн','Эффект повышения цен к базе за октябрь 2026',function(b){
   var p2=function(v){return pct(v,2);};
   var M=[
     {t:'Изменение средневзвешенной цены', kind:'pct', main:'price_pct', lines:function(x){ return [p2(x.price_pct), isNum(x.cur_price)?num(x.cur_price,1)+' → '+num(x.new_price,1)+' ₽':null]; }},

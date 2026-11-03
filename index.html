@@ -534,12 +534,11 @@ function define(){
 // 1. Титульный
 curGroup='Введение';
 SLIDES.push({raw:true, title:'Титульный', group:curGroup, build:function(sec){
-  var st=DEMO?['demo','Тестовые данные факта']:hasFact()?['ok','Факт загружен']:['','Черновик · факт ожидается'];
   sec.innerHTML='<div class="title-bg"></div><div class="title-txt"><div class="k">Ценообразование</div>'+
     '<h1>Повышение цен:<br>прогноз и факт</h1><div class="m">октябрь 2026</div>'+
     '<div class="d">Онлайн и офлайн · эффект новых цен на выручку и грязную маржу</div></div>'+
     '<img class="title-logo" src="'+A.logo+'" alt="ВкусВилл">'+
-    '<div class="title-status '+st[0]+'">'+st[1]+'</div>';
+    (DEMO?'<div class="title-status demo">Тестовые данные факта</div>':'');
 }});
 
 // 2. Что сделали

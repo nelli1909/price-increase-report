@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Повышение цен · октябрь 2026</title>
+<style>
+:root{
+  --green:#2DBE64; --green-d:#1E8A4A; --green-ink:#13532D; --green-50:#F1FAF4; --green-100:#DDF3E5;
+  --fc:#A3DDB9; --fact:#1E8A4A;
+  --ink:#1D2821; --ink2:#44524A; --muted:#78867D; --line:#E2E9E4; --grid:#EDF1EE; --bg:#EEF2EF;
+  --berry:#D7144B; --neg:#E5484D; --warn-bg:#FFF6DC; --warn-ink:#7A5A00;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+#side{position:fixed;left:0;top:0;bottom:0;width:270px;background:#fff;border-right:1px solid var(--line);
+  display:flex;flex-direction:column;z-index:20;transition:width .25s}
+#side.collapsed{width:58px}
+.side-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:16px 14px 12px;border-bottom:1px solid var(--line)}
+.side-head img{height:18px;overflow:hidden}
+#side.collapsed .side-head{justify-content:center;padding:16px 0 12px}
+#side.collapsed .side-head img{display:none}
+.side-btn{border:1px solid var(--line);background:#fff;color:var(--ink2);height:30px;min-width:30px;border-radius:9px;cursor:pointer;font-size:14px;padding:0 8px;font-family:inherit}
+.side-btn:hover{background:var(--green-50);border-color:var(--green)}
+.side-btn.on{background:var(--green-ink);border-color:var(--green-ink);color:#fff}
+#navList{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:8px 10px 16px}
+.nav-group{margin:14px 0 4px;padding:4px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);white-space:nowrap;overflow:hidden}
+.nav-item{display:flex;align-items:center;gap:9px;width:100%;padding:7px 9px;margin-bottom:2px;border:0;border-radius:11px;background:transparent;
+  color:var(--ink2);font:600 12.5px/1.25 inherit;font-family:inherit;text-align:left;cursor:pointer}
+.nav-item:hover{background:var(--green-50)}
+.nav-item.active{background:var(--green-ink);color:#fff}
+.nav-num{flex:none;width:20px;height:20px;border-radius:50%;background:#E8EEEA;color:var(--muted);font-size:10.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center}
+.nav-item.active .nav-num{background:var(--green);color:#fff}
+#side.collapsed .nav-label,#side.collapsed .nav-group{display:none}
+#side.collapsed .nav-item{justify-content:center;padding:7px 0}
+.side-foot{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.side-foot .side-btn{flex:1;font-size:12.5px}
+#side.collapsed .side-foot{flex-direction:column;padding:10px 8px}
+#side.collapsed .side-foot .side-btn{font-size:0;padding:0}
+#side.collapsed .side-foot .side-btn:before{font-size:14px;content:attr(data-i)}
+#main{position:fixed;left:270px;right:0;top:0;bottom:0;overflow-y:auto;overflow-x:hidden;scroll-snap-type:y proximity;
+  scroll-behavior:smooth;transition:left .25s}
+body.nav-collapsed #main{left:58px}
+.sl-wrap{position:relative;margin:0 auto;scroll-snap-align:start;scroll-margin-top:16px}
+.sl-pad{height:16px}
+.deck{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:top left}
+.slide{position:absolute;inset:0;background:#fff;border-radius:10px;box-shadow:0 6px 28px rgba(20,60,35,.14);overflow:hidden}
+#progress{position:fixed;top:0;right:0;height:3px;background:var(--green);transition:width .25s;z-index:30}
+
+/* шапка / подвал контентного слайда */
+.hdr{position:absolute;left:40px;right:40px;top:24px;height:64px;border-bottom:2px solid var(--green)}
+.hdr h1{margin:0;font-size:26px;line-height:1.15;color:var(--green-ink);font-weight:700;padding-right:170px}
+.hdr .sub{margin-top:4px;font-size:14px;color:var(--muted)}
+.hdr img{position:absolute;right:0;top:4px;height:18px}
+.body{position:absolute;left:40px;right:40px;top:104px;bottom:40px}
+.ftr{position:absolute;left:40px;right:40px;bottom:12px;display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+.demo-flag{position:absolute;right:40px;top:58px;font-size:11px;font-weight:700;color:var(--berry);letter-spacing:.04em;text-transform:uppercase}
+
+/* титульный */
+.title-bg{position:absolute;inset:0;background:var(--green);clip-path:polygon(0 0,100% 0,100% 86%,89% 66%,0 79%)}
+.title-txt{position:absolute;left:64px;top:92px;right:64px;color:#fff}
+.title-txt .k{font-size:22px;opacity:.9;letter-spacing:.02em}
+.title-txt h1{font-size:60px;line-height:1.05;margin:10px 0 18px;font-weight:800}
+.title-txt .m{font-size:30px;font-weight:600}
+.title-txt .d{font-size:17px;opacity:.9;margin-top:8px}
+.title-logo{position:absolute;left:64px;bottom:44px;height:44px}
+.title-status{position:absolute;right:64px;bottom:52px;display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;
+  background:var(--warn-bg);color:var(--warn-ink);font-size:15px;font-weight:600}
+.title-status.ok{background:var(--green-100);color:var(--green-ink)}
+.title-status.demo{background:#FBE3EA;color:var(--berry)}
+
+/* карточки */
+.kpi-grid{display:grid;gap:12px}
+.kpi-card{min-width:0;padding:16px 18px 14px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:0 10px 34px rgba(51,51,51,.04)}
+.kpi-card span{display:block;margin-bottom:6px;font-size:13px;color:var(--muted)}
+.kpi-card strong{display:block;font-size:30px;letter-spacing:-.03em;white-space:nowrap;color:var(--ink)}
+.kpi-card em{display:block;margin-top:6px;font-size:12.5px;font-style:normal;color:var(--ink2)}
+
+.ch-panel{border:1px solid var(--line);border-radius:22px;padding:18px 22px 16px;background:#fff;box-shadow:0 14px 40px rgba(51,51,51,.05);display:flex;flex-direction:column;min-height:0}
+.ch-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.ch-head h2{margin:0;font-size:24px;color:var(--green-ink);display:flex;align-items:center;gap:12px}
+.ch-badge{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--green-100);color:var(--green-d);font-size:17px}
+.ch-meta{font-size:13px;color:var(--muted);text-align:right;line-height:1.35}
+.ch-meta b{color:var(--ink);font-size:15px}
+
+/* таблица-карточка прогноз/факт */
+.pf{width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
+.pf th{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);text-align:right;padding:0 8px 8px}
+.pf th:first-child{text-align:left;padding-left:0}
+.pf td{padding:14px 8px;text-align:right;border-top:1px solid var(--line);font-size:15px;white-space:nowrap}
+.pf td:first-child{text-align:left;padding-left:0;font-size:14px;color:var(--ink2);white-space:normal}
+.pf td.f{font-weight:700;font-size:19px;color:var(--ink)}
+.pf td.a{font-weight:700;font-size:19px;color:var(--fact)}
+.pf td.wait{color:var(--muted);font-size:13px;font-weight:500}
+.pf td.up{color:var(--green-d);font-weight:600}
+.pf td.down{color:var(--berry);font-weight:600}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:0}
+
+.two-ch{display:grid;grid-template-columns:1fr 1fr;gap:18px;height:100%}
+.two-ch.cat{height:calc(100% - 34px)}
+.two-ch.cat .ch-panel{padding:12px 18px}
+.ch-head.sm{margin-bottom:6px}
+.ch-head.sm h2{font-size:20px}
+.ch-head.sm .ch-badge{width:32px;height:32px;font-size:15px}
+.ch-head.sm .ch-meta{font-size:13px;font-weight:600;color:var(--ink2)}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;flex:1;min-height:0}
+.mcard{border:1px solid var(--line);border-radius:18px;padding:14px 16px 12px;background:#fff;box-shadow:0 10px 34px rgba(51,51,51,.04);display:flex;flex-direction:column}
+.mcard .mt{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--green-d);margin-bottom:6px}
+.mrow{display:flex;align-items:flex-start;gap:10px;margin-top:10px}
+.mrow .k{width:78px;flex:none;font-size:12.5px;color:var(--muted);padding-top:5px}
+.mvals{font-size:21px;font-weight:700;line-height:1.25;letter-spacing:-.01em;color:var(--ink);white-space:nowrap}
+.mvals.a{color:var(--fact)}
+.mvals .wait{font-size:14px;font-weight:500;color:var(--muted);padding-top:3px}
+.mnote{margin-top:6px;font-size:12.5px;color:var(--muted)}
+.mdev{margin-top:auto;padding-top:9px;border-top:1px solid var(--line);font-size:13px;font-weight:600}
+.mdev .up{color:var(--green-d)} .mdev .down{color:var(--berry)} .mdev .wait{color:var(--muted);font-weight:500}
+/* метод */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.step{min-height:200px}
+.step{border:1px solid var(--line);border-radius:18px;padding:16px 16px 14px;background:var(--green-50)}
+.step .n{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;font-size:15px;margin-bottom:10px}
+.step h3{margin:0 0 6px;font-size:17px;color:var(--green-ink)}
+.step p{margin:0;font-size:14.5px;line-height:1.45;color:var(--ink2)}
+.two-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.card{border:1px solid var(--line);border-radius:18px;padding:14px 18px;background:#fff}
+.card h3{margin:0 0 8px;color:var(--green-ink);font-size:17px}
+.card ul{margin:0;padding-left:20px;font-size:15px;line-height:1.55;color:var(--ink2)}
+.callout{margin-top:16px;display:flex;gap:16px;align-items:center;padding:14px 20px;border-radius:18px;background:var(--green-ink);color:#fff;font-size:15px;line-height:1.45}
+.callout b{color:#B9F0CD}
+.callout .ic{flex:none;width:40px;height:40px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-weight:800;font-size:20px}
+
+/* графики */
+.chart{position:relative}
+.chart svg{display:block;overflow:visible}
+.ttl{font-size:16px;font-weight:600;color:var(--ink);margin:0 0 4px}
+.tip{position:absolute;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+  box-shadow:0 4px 16px rgba(0,0,0,.12);font-size:12.5px;line-height:1.55;white-space:nowrap;display:none;z-index:5}
+.tip b{font-weight:600}
+.tip .sw{width:10px;height:10px;margin-right:6px}
+.legend{display:flex;gap:22px;font-size:13px;color:var(--ink2);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{display:inline-block;width:14px;height:10px;border-radius:3px}
+.legend i.dash{background:none;border:1.5px dashed #B9C4BD}
+.chart-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.chart-top .hint{font-size:12.5px;color:var(--muted)}
+.empty{color:var(--muted);font-style:italic;padding:30px 0}
+
+/* выводы */
+.concl{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.concl .it{border:1.5px dashed #C9D6CD;border-radius:18px;padding:16px 18px;min-height:150px}
+.concl.done .it{border:1px solid var(--line);background:#fff;min-height:0}
+.concl.done .it p b{color:var(--green-ink)}
+.two-ch.prod{height:auto}
+.two-ch.prod .ch-panel{padding-bottom:8px}
+.concl .it h3{margin:0 0 8px;font-size:17px;color:var(--green-ink);display:flex;align-items:center;gap:10px}
+.concl .it h3 .n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--green-100);color:var(--green-d);font-size:13px;font-weight:800}
+.concl .it p{margin:0;font-size:14.5px;line-height:1.5;color:var(--ink2)}
+.concl .it p i{color:var(--muted)}
+
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:#fff}
+  #side,#progress,.sl-pad{display:none}
+  #main{position:static;overflow:visible;scroll-snap-type:none}
+  .sl-wrap{width:1280px!important;height:auto!important;margin:0;page-break-after:always}
+  .deck{position:static;transform:none!important;width:auto;height:auto!important}
+  .slide{position:relative;width:1280px;height:720px;box-shadow:none;border-radius:0}
+  .tip{display:none!important}
+}
+
+/* Аккуратная типографика слайдов 5–9. Остальные слайды без изменений. */
+.slide.polished .hdr{border-bottom-color:#2DBE64}
+.slide.polished .ch-panel{box-shadow:none;background:#fff;border-color:#DFEAE2;border-radius:20px}
+.slide.polished .chart-top{height:28px;margin-bottom:8px}
+.slide.polished .legend{gap:20px;font-size:13px}
+.slide.polished .chart-top .hint{font-size:12px;color:#66776C}
+.slide.polished .chart-shell{height:calc(100% - 36px);padding:12px 14px 10px;overflow:visible}
+.slide.polished .chart svg{font-family:"Segoe UI",Arial,sans-serif;font-variant-numeric:tabular-nums}
+.slide.polished .ch-head{margin-bottom:13px;padding:0 2px 12px;border-bottom:1px solid #E4ECE6}
+.slide.polished .ch-meta{color:#66776C;font-size:13px}
+.slide.polished .ch-badge{background:#EAF6EE}
+.slide.polished .mgrid{gap:12px}
+.slide.polished .mcard{padding:14px 15px 12px;border:1px solid #E1EBE4;border-radius:16px;box-shadow:none;background:linear-gradient(145deg,#F6FAF7,#FFFFFF 65%)}
+.slide.polished .mt{font-size:14px;line-height:1.22;font-weight:650;letter-spacing:0;text-transform:none;color:#365943;min-height:34px;margin-bottom:4px}
+.slide.polished .mrow{display:grid;grid-template-columns:56px minmax(0,1fr);gap:8px;margin-top:7px;align-items:start}
+.slide.polished .mrow .k{width:auto;padding-top:7px;font-size:11.5px;color:#748378;white-space:nowrap}
+.slide.polished .mrow .sw{width:7px;height:7px;margin-right:4px;border-radius:2px}
+.slide.polished .mvals{font-size:27px;font-weight:700;line-height:1.15;letter-spacing:-.7px;color:#194D2E;font-variant-numeric:tabular-nums}
+.slide.polished .mvals .value-secondary{font-size:14px;font-weight:500;letter-spacing:0;color:#68796E;margin-top:5px;line-height:1.25}
+.slide.polished .mvals .number-unit{font-size:15px;font-weight:600;letter-spacing:0;margin-left:2px;white-space:nowrap}
+.slide.polished .mvals.a{color:#1E8A4A}
+.slide.polished .mvals .wait{font-size:12px;font-weight:500;letter-spacing:0;background:#EDF3EF;border-radius:6px;padding:5px 8px;display:inline-block;margin-top:2px;color:#7B8A80}
+.slide.polished .mdev{font-size:11.5px;line-height:1.4;padding-top:10px;border-top-color:#DFE9E2;font-weight:500}
+.slide.polished .mdev .wait{color:#839188}
+.slide.polished .ch-panel:has(.mgrid){padding:17px 18px 15px}
+
+
+/* Переработка контраста и графиков */
+.slide.polished{--fc:#2DBE64;--fact:#D7144B;color:#202822}
+.slide.polished .ch-panel{border-color:#E0E5E1;background:white}
+.slide.polished .ch-head h2{color:#202822}
+.slide.polished .ch-meta{color:#526158}
+.slide.polished .mcard{background:#fff;border:1px solid #D9E1DA;border-top:4px solid #2DBE64;box-shadow:0 3px 12px #20352508;padding:14px 15px 12px}
+.slide.polished .mcard:nth-child(2){border-top-color:#F4B942}
+.slide.polished .mcard:nth-child(3){border-top-color:#2DBE64;background:#F0FAF3}
+.slide.polished .mcard:nth-child(4){border-top-color:#D7144B}
+.slide.polished .mt{font-size:15px;color:#242E27;font-weight:650}
+.slide.polished .mrow{grid-template-columns:1fr;gap:2px;margin-top:8px;position:relative}
+.slide.polished .mrow .k{padding:0;font-size:11px;color:#526158}
+.slide.polished .mrow .sw{display:none}
+.slide.polished .mvals{font-size:34px;font-weight:750;letter-spacing:-1px;color:#19231C;line-height:1.06}
+.slide.polished .mvals .number-unit{font-size:16px;color:#39463D}
+.slide.polished .mvals .value-secondary{font-size:14px;color:#46564B;margin-top:5px;letter-spacing:0}
+.slide.polished .mvals.a{font-size:27px;color:#D7144B}
+.slide.polished .mvals .wait{font-size:12px;color:#526158;background:#F0F2F0;padding:4px 8px}
+.slide.polished .mdev{color:#526158;font-size:11px;padding-top:7px;line-height:1.25}
+.slide.polished .mdev .wait{color:#526158}
+.slide.polished .mgrid{gap:13px}
+.slide.polished .mcard .mrow:nth-of-type(3){margin-top:10px}
+.slide.polished .mcard{padding:12px 15px 10px}
+.slide.polished .mt{min-height:20px}
+.slide.polished .mrow,.slide.polished .mcard .mrow:nth-of-type(3){margin-top:6px}
+.slide.polished .chart-shell{border:0;border-radius:0;padding:12px 14px 10px;box-shadow:none}
+.slide.polished .chart-top .hint{font-size:12px;color:#46564B}
+.slide.polished .legend{color:#34473B;font-size:13px}
+.slide.polished .tip{color:#202822;border-color:#B9CCBF;font-size:14px;box-shadow:0 6px 25px #213a2920}
+
+
+/* Факт после повышения */
+.concl2{display:grid;grid-template-columns:1fr 1fr;gap:20px;height:100%}
+.cb{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 10px 34px rgba(51,51,51,.05)}
+.cb-h{padding:20px 26px 18px;background:var(--green-ink);color:#fff}
+.cb.b2 .cb-h{background:#1E6B41}
+.cb-k{display:flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#B9F0CD}
+.cb-k span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;font-size:14px;letter-spacing:0}
+.cb-h h3{margin:10px 0 0;font-size:24px;line-height:1.2;color:#fff}
+.cb-v{margin-top:12px;font-size:46px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.cb-vs{margin-top:6px;font-size:14px;color:#D6F5E1}
+.cb ul{flex:1;list-style:none;margin:0;padding:18px 26px 6px;display:flex;flex-direction:column;justify-content:space-around;gap:10px}
+.cb li{position:relative;padding-left:26px;font-size:17px;line-height:1.4;color:var(--ink2)}
+.cb li:before{content:'';position:absolute;left:2px;top:7px;width:11px;height:11px;border-radius:50%;background:var(--green)}
+.cb li b{color:var(--ink);white-space:nowrap}
+.cb-f{display:flex;align-items:center;gap:10px;margin:8px 20px 18px;padding:11px 16px;border-radius:14px;background:#FFF6E0;color:#6B5418;font-size:14.5px;font-weight:600}
+.cb-f i{font-style:normal;font-size:18px}
+
+.kgrid.two{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;height:100%}
+.kgrid.two .kc{display:flex;flex-direction:column;justify-content:center;padding:14px 16px}
+.kgrid.two .kv{font-size:24px;margin-top:6px}
+.kgrid.two .kd{margin:2px 0 0;font-size:15px}
+.kgrid.two .ks{margin-top:8px;line-height:1.35}
+.two-ch.cat.call{height:calc(100% - 34px - 84px)}
+.pick{display:grid;grid-template-columns:480px 1fr;gap:18px;height:calc(100% - 34px - 84px)}
+.pick .ch-panel{padding:12px 18px;min-height:0}
+.pick-list{display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.pick-it{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:5px 10px;border:0;border-radius:10px;background:transparent;font:inherit;text-align:left;cursor:pointer;color:var(--ink)}
+.pick-it:hover{background:#F2F7F3}
+.pick-it.on{background:var(--green-ink);color:#fff}
+.pick-it .pn{font-size:13px;font-weight:600}
+.pick-it .pn small{margin-left:8px;font-size:11.5px;font-weight:400;color:var(--muted)}
+.pick-it .pv{font-size:13px;font-weight:700;white-space:nowrap}
+.pick-it .pv em{font-style:normal;margin-left:8px;color:var(--muted)}
+.pick-it .pv em.up{color:var(--berry)} .pick-it .pv em.dn{color:var(--green-d)}
+.pick-it.on .pn small,.pick-it.on .pv em{color:#B9F0CD}
+.pick-main{display:flex;flex-direction:column}
+.pick-scroll{flex:1;min-height:0;overflow-y:auto}
+
+.post-grid{display:grid;grid-template-columns:736px 1fr;gap:18px;height:418px}
+.post-grid.tall{height:505px}
+.post-grid .ch-panel{padding:16px 22px}
+.post-side{display:flex;flex-direction:column;gap:12px;min-height:0}
+.hero{border-radius:20px;padding:16px 20px;background:var(--green-ink);color:#fff}
+.hero .hl{font-size:14px;opacity:.85}
+.hero .hv{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-top:2px}
+.hero .hs{font-size:15px;opacity:.9}
+.hero .hx{margin-top:8px;font-size:14px;color:#B9F0CD}
+.hero .hx b{color:#fff}
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1}
+.kc{border:1px solid var(--line);border-radius:16px;padding:10px 14px;background:#fff}
+.kc.wide{flex:1;display:flex;flex-direction:column;justify-content:center;padding:14px 18px}
+.kc .kt{font-size:12.5px;color:var(--muted)}
+.kc .kv{font-size:22px;font-weight:700;color:var(--ink);margin-top:2px;white-space:nowrap}
+.kc.wide .kv{font-size:28px}
+.kc .ks{font-size:12px;color:var(--ink2);margin-top:2px}
+.kc .kd{font-size:16px;font-weight:700;margin-left:6px}
+.kc .kd.down{color:var(--berry)} .kc .kd.up{color:var(--green-d)}
+.post-call{margin-top:14px;padding:12px 20px;font-size:16px}
+.post-note{margin-top:8px;font-size:12px;color:var(--muted)}
+
+/* Жалобы: карточки и выбор товара. Изменения оформления от 03.11.2026. */
+.slide:has(#cpc) .kgrid.two{gap:12px}
+.slide:has(#cpc) .kgrid.two .kc{justify-content:flex-start;padding:16px 15px 13px;border:1px solid #DCE6DF;border-radius:16px;background:#fff;box-shadow:none;border-top:3px solid #2DBE64}
+.slide:has(#cpc) .kgrid.two .kc:nth-child(2){border-top-color:#D7144B}
+.slide:has(#cpc) .kgrid.two .kc:nth-child(3){border-top-color:#93B79F}
+.slide:has(#cpc) .kgrid.two .kc:nth-child(4){border-top-color:#D7144B}
+.slide:has(#cpc) .kc .kt{font-size:13px;font-weight:550;line-height:1.3;color:#44564A;min-height:34px}
+.slide:has(#cpc) .kgrid.two .kv{font-size:27px;line-height:1.1;font-weight:750;letter-spacing:-.5px;margin-top:10px;font-variant-numeric:tabular-nums}
+.slide:has(#cpc) .kc .kv .before{font-weight:550;color:#617068}
+.slide:has(#cpc) .kc .kv .arrow{font-size:20px;font-weight:400;color:#8CA395;padding:0 4px}
+.slide:has(#cpc) .kc .kv .after{color:#202B23}
+.slide:has(#cpc) .kgrid.two .kd{font-size:14px;font-weight:700;line-height:1.3;margin:7px 0 0;padding:3px 8px;border-radius:6px;align-self:flex-start;background:#FFF0F4;color:#C00F43}
+.slide:has(#cpc) .kgrid.two .ks{font-size:12px;color:#526359;line-height:1.4;margin-top:auto;padding-top:11px}
+.slide:has(.pick) .pick{grid-template-columns:330px minmax(0,1fr);gap:18px;height:calc(100% - 34px - 84px)}
+.slide:has(.pick) .pick .ch-panel{border-radius:18px;border-color:#DFE8E1;box-shadow:none;padding:14px 16px}
+.slide:has(.pick) .pick-list{gap:5px;scrollbar-width:thin;scrollbar-color:#B9CDBF #F4F7F4;padding:12px 10px}
+.slide:has(.pick) .pick-it{padding:10px 11px;border-radius:10px;gap:8px;align-items:center;min-height:58px;flex-shrink:0}
+.slide:has(.pick) .pick-it:not(.on):hover{background:#F0F8F2}
+.slide:has(.pick) .pick-it .pn{font-size:13px;font-weight:600;line-height:1.25;flex:1;min-width:0}
+.slide:has(.pick) .pick-it .pn small{display:block;margin:4px 0 0;font-size:11.5px;color:#607168;font-weight:400}
+.slide:has(.pick) .pick-it .pv{font-size:12px;font-weight:650;line-height:1.25;text-align:right;font-variant-numeric:tabular-nums}
+.slide:has(.pick) .pick-it .pv em{display:block;font-size:12px;margin:5px 0 0;font-weight:650}
+.slide:has(.pick) .pick-it.on{background:#155C35;color:#fff}
+.slide:has(.pick) .pick-it.on .pn small,.slide:has(.pick) .pick-it.on .pv em{color:#D8F0DF}
+.slide:has(.pick) .pick-main{min-width:0}
+.slide:has(.pick) .pick-main .ch-head{padding:2px 0 13px;margin-bottom:6px;border-bottom:1px solid #E6EDE7;align-items:flex-start}
+.slide:has(.pick) .pick-main .ch-head h2{font-size:20px;color:#203A29;line-height:1.2;max-width:440px}
+.slide:has(.pick) .pick-main .ch-meta{font-size:12px;color:#526459;max-width:230px;line-height:1.4}
+.slide:has(.pick) .pick-scroll{scrollbar-width:thin;scrollbar-color:#B9CDBF #F4F7F4;padding-right:5px}
+.slide:has(.pick) .chart-top .hint{color:#526459;font-size:12px}
+.slide:has(.pick) .post-call{font-size:14.5px;line-height:1.4;border-radius:16px}
+/* Выводы: контрастные цифры, ровные заголовки и спокойные пояснения. */
+.slide:has(.concl2) .concl2{gap:20px}
+.slide:has(.concl2) .cb{box-shadow:none;border:1px solid #DCE6DE;border-radius:20px;border-top:5px solid #2DBE64}
+.slide:has(.concl2) .cb.b2{border-top-color:#D7144B}
+.slide:has(.concl2) .cb-h,.slide:has(.concl2) .cb.b2 .cb-h{background:#fff;color:#202B23;padding:19px 24px 18px;border-bottom:1px solid #E4ECE6}
+.slide:has(.concl2) .cb-k{font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;color:#1A7440}
+.slide:has(.concl2) .cb-k span{width:27px;height:27px;background:#E6F5EB;color:#166939;font-size:13px}
+.slide:has(.concl2) .b2 .cb-k{color:#B61443}
+.slide:has(.concl2) .b2 .cb-k span{color:#B61443;background:#FDEBF1}
+.slide:has(.concl2) .cb-h h3{font-size:23px;line-height:1.22;font-weight:650;color:#202B23;margin:12px 0 0;min-height:56px;letter-spacing:-.3px}
+.slide:has(.concl2) .cb-v{font-size:43px;line-height:1.05;letter-spacing:-1.1px;color:#174B2D;margin-top:16px;font-variant-numeric:tabular-nums}
+.slide:has(.concl2) .b2 .cb-v{color:#C31247}
+.slide:has(.concl2) .cb-vs{font-size:13px;line-height:1.4;color:#526359;margin-top:7px;max-width:475px}
+.slide:has(.concl2) .cb ul{padding:19px 24px 14px;gap:17px;justify-content:flex-start}
+.slide:has(.concl2) .cb li{padding-left:18px;font-size:15.5px;line-height:1.45;color:#425348}
+.slide:has(.concl2) .cb li:before{left:0;top:8px;width:6px;height:6px;background:#2DBE64}
+.slide:has(.concl2) .cb.b2 li:before{background:#D7144B}
+.slide:has(.concl2) .cb li b{color:#202B23;white-space:normal;font-weight:700}
+.slide:has(.concl2) .cb-f{margin:auto 19px 18px;padding:12px 14px;background:#F1F7F2;color:#365341;border-radius:11px;font-size:13px;line-height:1.4;font-weight:500;align-items:flex-start}
+.slide:has(.concl2) .b2 .cb-f{background:#FFF1F5;color:#7C3148}
+.slide:has(.concl2) .cb-f i{font-size:17px;line-height:1.2;color:#1C7844}
+.slide:has(.concl2) .b2 .cb-f i{color:#BC1947}
+
+
+.slide:has(.pick) .pick{height:calc(100% - 34px - 112px)}
+.two-ch.cat.call{height:calc(100% - 34px - 112px)}
+.slide:has(.pick) .pick-main .ch-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:10px;padding-bottom:10px;margin-bottom:0}
+.slide:has(.pick) .pick-main .ch-head h2{font-size:19px;line-height:1.2;max-width:none;color:#203C2B;margin:0}
+.product-category{font-size:12px;font-weight:500;color:#4F6A59;margin-top:5px;display:flex;align-items:center;gap:6px}
+.product-category:before{content:'Категория:';color:#7B8D80;font-weight:400}
+.product-chart-key{display:grid;grid-template-columns:57% minmax(0,1fr) 100px;gap:12px;align-items:center;padding:9px 17px 7px 0;color:#536D5D;font-size:11px;font-weight:600}
+.product-chart-key span:last-child{text-align:left}
+.slide:has(.pick) .pick-main .ch-meta{font-size:11.5px;max-width:none;white-space:nowrap;text-align:right}
+.slide:has(.pick) .pick-scroll{border-top:1px solid #EFF3EF}
+
+
+/* Зелёные выводы с явными переносами строк */
+.callout.plain-takeaway{display:flex;gap:16px;align-items:center;background:#13532D;color:#fff;border:0;border-radius:18px;margin-top:12px;padding:12px 18px;font-size:14.5px;line-height:1.35}
+.plain-takeaway .call-lines{display:grid;gap:4px;min-width:0}
+.plain-takeaway .call-lines b{color:#D6F4DF;font-weight:700}
+.plain-takeaway .ic{width:38px;height:38px;font-size:20px;background:#2DBE64;color:#fff}
+.slide:has(#cpc) .kgrid.two .ks{font-size:12px;line-height:1.4;color:#4A6052;min-height:61px;padding-top:10px;margin-top:auto}
+.slide:has(#cpc) .ks .caption-line{display:block}
+.slide:has(#cpc) .ks strong{font-weight:650;color:#344D3D;white-space:nowrap}
+
+</style>
+</head>
+<body>
+<aside id="side">
+  <div class="side-head"><img id="sideLogo" alt="ВкусВилл"><button class="side-btn" id="navToggle" title="Свернуть / развернуть содержание">&#9776;</button></div>
+  <nav id="navList" aria-label="Содержание"></nav>
+  <div class="side-foot">
+    <button class="side-btn" id="demo" data-i="&#x2731;" title="Показать отчёт с тестовым фактом">Пример факта</button>
+    <button class="side-btn" id="fs" data-i="&#x26F6;" title="Во весь экран (F)">&#x26F6; Экран</button>
+    <button class="side-btn" id="pr" data-i="&#x1F5B6;" title="Печать / PDF">Печать</button>
+  </div>
+</aside>
+<div id="progress"></div>
+<main id="main"></main>
+
+<script>window.ASSETS = {logo:'data:image/png;base64,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'};</script>
+
+<!-- Прогноз. Не редактировать вручную. -->
+<script type="application/json" id="forecast">{"totals": {"total": {"new_price": 192.8660635150068, "cur_price": 191.1930089410154, "price_pct": 0.008750605386975918, "rev_pct": 0.004675998545513448, "gm_pct": 0.01492718697475551, "units_pct": -0.003942444286257349, "rev_rub": 114357986.6139731, "gm_rub": 179881702.8223945, "units": -581236.8623311084, "sku": 1807, "share_pp": 0.3444044080427366}, "online": {"new_price": 189.2079571287427, "cur_price": 187.3273897683344, "price_pct": 0.01003893431032155, "rev_pct": 0.007438391352169462, "gm_pct": 0.01825531558096337, "units_pct": -0.002451179114366409, "rev_rub": 89009207.4261838, "gm_rub": 108626925.1526168, "units": -180009.434305911, "sku": 1693, "share_pp": 0.2420941369424969}, "offline": {"new_price": 196.5075884152635, "cur_price": 195.0296438777505, "price_pct": 0.007578050742067521, "rev_pct": 0.002029495524550196, "gm_pct": 0.01168076167003255, "units_pct": -0.005422528020021708, "rev_rub": 25348779.18778933, "gm_rub": 71254777.66977765, "units": -401227.4280251974, "sku": 1492, "share_pp": 0.1023102711002566}}, "cats": [{"name": "Алкоголь", "online": {"new_price": 196.2128287927733, "cur_price": 195.6675957841352, "price_pct": 0.002786526846476844, "rev_pct": 0.002777503129140955, "gm_pct": 0.006326222663333245, "units_pct": 0, "rev_rub": 74085.40645574793, "gm_rub": 74085.40645574793, "units": 0, "sku": 17, "share_pp": 0.0001043304191856434}, "offline": {"new_price": 195.7631314101753, "cur_price": 195.2145634271853, "price_pct": 0.002810077144652423, "rev_pct": 0.002773980405533498, "gm_pct": 0.006375903256565719, "units_pct": -3.112497090243414e-05, "rev_rub": 713300.7247834406, "gm_rub": 718791.8896297361, "units": -50.01794529216293, "sku": 17, "share_pp": 0.00103705759524203}, "total": {"new_price": 195.8053074691316, "cur_price": 195.2570510670993, "price_pct": 0.002807869928568962, "rev_pct": 0.002774311478818945, "gm_pct": 0.006371228143248067, "units_pct": -2.82059154845414e-05, "rev_rub": 787386.1312391885, "gm_rub": 792877.2960854841, "units": -50.01794529216293, "sku": 17, "share_pp": 0.001141388014427695}}, {"name": "Бакалея", "online": {"new_price": 144.4011751199372, "cur_price": 141.1943835314551, "price_pct": 0.02271189199085732, "rev_pct": 0.01374688343028743, "gm_pct": 0.03515348821869057, "units_pct": -0.008531337464550292, "rev_rub": 6532168.860450707, "gm_rub": 8376202.598544274, "units": -33543.48448888872, "sku": 358, "share_pp": 0.02099750639935304}, "offline": {"new_price": 139.3817867705574, "cur_price": 138.0509410380096, "price_pct": 0.009640251073561368, "rev_pct": 0.00398011846083787, "gm_pct": 0.01282027470501908, "units_pct": -0.005580692589321835, "rev_rub": 2651524.051170865, "gm_rub": 4185354.402851157, "units": -31467.61222839123, "sku": 183, "share_pp": 0.008427624526417647}, "total": {"new_price": 141.4402754974039, "cur_price": 139.3423507247977, "price_pct": 0.01505590196873885, "rev_pct": 0.008046224161567033, "gm_pct": 0.02224312511851339, "units_pct": -0.006792895892575245, "rev_rub": 9183692.911621572, "gm_rub": 12561557.00139543, "units": -65011.09671727994, "sku": 365, "share_pp": 0.02942513092577051}}, {"name": "Детское питание", "online": {"new_price": 86.6928321407867, "cur_price": 86.6928321407867, "price_pct": 0, "rev_pct": 0, "gm_pct": 0, "units_pct": 0, "rev_rub": 0, "gm_rub": 0, "units": 0, "sku": 0, "share_pp": -0.000326661407281997}, "offline": {"new_price": 83.45538908041617, "cur_price": 83.45538908041617, "price_pct": 0, "rev_pct": 0, "gm_pct": 0, "units_pct": 0, "rev_rub": 0, "gm_rub": 0, "units": 0, "sku": 0, "share_pp": -0.0004270556522753457}, "total": {"new_price": 84.85199919363404, "cur_price": 84.85199919363404, "price_pct": 0, "rev_pct": 0, "gm_pct": 0, "units_pct": 0, "rev_rub": 0, "gm_rub": 0, "units": 0, "sku": 0, "share_pp": -0.0007537170595572993}}, {"name": "Замороженные п/ф", "online": {"new_price": 484.1177075820705, "cur_price": 477.6504307255125, "price_pct": 0.01353976975742421, "rev_pct": 0.001559599198806375, "gm_pct": 0.01093253865184012, "units_pct": -0.01182485026339298, "rev_rub": 1048784.785377567, "gm_rub": 4102099.611308111, "units": -18580.16998623585, "sku": 164, "share_pp": 0.007848136460320704}, "offline": {"new_price": 479.6146200511108, "cur_price": 472.9374354014078, "price_pct": 0.01411853693509313, "rev_pct": -0.003990105168211744, "gm_pct": 0.00583886837067359, "units_pct": -0.01778389769400599, "rev_rub": -2319871.366029409, "gm_rub": 1876659.915414761, "units": -24398.49164566923, "sku": 164, "share_pp": 0.00215148893562625}, "total": {"new_price": 482.0254331239599, "cur_price": 475.4535339771889, "price_pct": 0.01382237942748432, "rev_pct": -0.001013725269860191, "gm_pct": 0.008582434397397472, "units_pct": -0.01460257674584114, "rev_rub": -1271086.580651842, "gm_rub": 5978759.526722872, "units": -42978.66163190508, "sku": 164, "share_pp": 0.009999625395946954}}, {"name": "Консервация", "online": {"new_price": 190.0723057365429, "cur_price": 187.75225273954, "price_pct": 0.01235699153086256, "rev_pct": 0.01076246095816952, "gm_pct": 0.0242217210213303, "units_pct": -0.001564520681986217, "rev_rub": 2169141.033573842, "gm_rub": 2482040.22353596, "units": -2048.927330861133, "sku": 43, "share_pp": 0.005888166035174442}, "offline": {"new_price": 184.2760254687386, "cur_price": 183.621777369494, "price_pct": 0.003563020185389121, "rev_pct": 0.00342676550924129, "gm_pct": 0.007049582679134184, "units_pct": -0.000130721484920387, "rev_rub": 725024.0406227947, "gm_rub": 740424.4586923214, "units": -183.7574496954597, "sku": 7, "share_pp": 0.0009952357432547673}, "total": {"new_price": 187.0695218795319, "cur_price": 185.6139250365748, "price_pct": 0.00784206703602841, "rev_pct": 0.007005564923431197, "gm_pct": 0.01552975314163512, "units_pct": -0.000822249570576345, "rev_rub": 2894165.074196637, "gm_rub": 3222464.682228281, "units": -2232.684780556593, "sku": 43, "share_pp": 0.006883401778429166}}, {"name": "Кулинария", "online": {"new_price": 294.1688258061556, "cur_price": 291.0193461097437, "price_pct": 0.01082223480505018, "rev_pct": 0.00907163628528909, "gm_pct": 0.01917426870412097, "units_pct": -0.001683929220249525, "rev_rub": 24405042.82164945, "gm_rub": 26154820.87676122, "units": -18306.66095394532, "sku": 101, "share_pp": 0.0600786869319532}, "offline": {"new_price": 283.3917614234442, "cur_price": 280.8565248722467, "price_pct": 0.009026803106499948, "rev_pct": 0.004708030824517782, "gm_pct": 0.0132024608223078, "units_pct": -0.004219085933303958, "rev_rub": 13106546.33375659, "gm_rub": 18005468.52099708, "units": -49189.04421228241, "sku": 84, "share_pp": 0.03673143631715073}, "total": {"new_price": 288.5988369879713, "cur_price": 285.7603685066397, "price_pct": 0.009933037587280591, "rev_pct": 0.006852522955982818, "gm_pct": 0.01618865146881808, "units_pct": -0.002995802376605035, "rev_rub": 37511589.15540604, "gm_rub": 44160289.39775831, "units": -67495.70516622774, "sku": 113, "share_pp": 0.09681012324910393}}, {"name": "Молочная Продукция", "online": {"new_price": 117.4788828847021, "cur_price": 116.9965798485388, "price_pct": 0.004122368677679455, "rev_pct": 0.003951428603941066, "gm_pct": 0.008386151532050336, "units_pct": -0.0001670445525207269, "rev_rub": 5897921.317504707, "gm_rub": 5940646.64664336, "units": -2347.545557068846, "sku": 78, "share_pp": 0.01002240028863954}, "offline": {"new_price": 115.484347069261, "cur_price": 115.1097219084064, "price_pct": 0.003254504959648186, "rev_pct": 0.001172706270973349, "gm_pct": 0.005174941296221663, "units_pct": -0.002071457240975109, "rev_rub": 1794376.426472466, "gm_rub": 3691737.431037337, "units": -30331.84117689404, "sku": 86, "share_pp": 0.003559460049329735}, "total": {"new_price": 116.4620839494097, "cur_price": 116.0337752775104, "price_pct": 0.003691241372392629, "rev_pct": 0.002544825897203938, "gm_pct": 0.006774900384727253, "units_pct": -0.001138806762366627, "rev_rub": 7692297.743977172, "gm_rub": 9632384.077680698, "units": -32679.38673396289, "sku": 90, "share_pp": 0.01358186033796893}}, {"name": "Мороженое", "online": {"new_price": 141.4837171026159, "cur_price": 138.8906825439668, "price_pct": 0.01866960771704984, "rev_pct": 0.01742045269432545, "gm_pct": 0.03158099569550747, "units_pct": -0.001239040601560811, "rev_rub": 834546.0439276187, "gm_rub": 850340.490590609, "units": -472.1807672044929, "sku": 14, "share_pp": 0.001273868517422984}, "offline": {"new_price": 136.6983152493793, "cur_price": 133.6709227196697, "price_pct": 0.02264810078448098, "rev_pct": 0.0226830615441317, "gm_pct": 0.04165190830743527, "units_pct": 0, "rev_rub": 964210.6151946274, "gm_rub": 964210.6151946273, "units": 0, "sku": 15, "share_pp": 0.001685428078100496}, "total": {"new_price": 139.1866934324912, "cur_price": 136.3867795027832, "price_pct": 0.02052921800716634, "rev_pct": 0.01989465577617285, "gm_pct": 0.03623669851184257, "units_pct": -0.0006446765628254023, "rev_rub": 1798756.659122246, "gm_rub": 1814551.105785236, "units": -472.1807672044929, "sku": 15, "share_pp": 0.002959296595523436}}, {"name": "Мясные деликатесы. Колбасы", "online": {"new_price": 342.2463731934217, "cur_price": 339.734412579571, "price_pct": 0.007393895115827664, "rev_pct": 0.004414434494003054, "gm_pct": 0.01012146205793379, "units_pct": -0.002929331604211295, "rev_rub": 3340358.468635752, "gm_rub": 4078850.910829088, "units": -7244.771636632348, "sku": 42, "share_pp": 0.007473414711396155}, "offline": {"new_price": 336.8806681636637, "cur_price": 334.4797944251073, "price_pct": 0.007177933551062443, "rev_pct": 0.002346557016164453, "gm_pct": 0.008534030880733153, "units_pct": -0.004791933689941825, "rev_rub": 2058384.138086001, "gm_rub": 3941921.212161119, "units": -13954.42464169654, "sku": 42, "share_pp": 0.006461701736927908}, "total": {"new_price": 339.3473672938323, "cur_price": 336.8929849984906, "price_pct": 0.007285346993356923, "rev_pct": 0.003304239978007648, "gm_pct": 0.009273679387825418, "units_pct": -0.00393653113487117, "rev_rub": 5398742.606721752, "gm_rub": 8020772.122990207, "units": -21199.19627832889, "sku": 42, "share_pp": 0.01393511644832424}}, {"name": "Мясо. Птица. П/ф охл. Яйца", "online": {"new_price": 404.1692600185861, "cur_price": 401.0447009564998, "price_pct": 0.007791049363410574, "rev_pct": 0.002800413729073315, "gm_pct": 0.01006923616643563, "units_pct": -0.004941926454467746, "rev_rub": 4645016.211575882, "gm_rub": 7471151.496829244, "units": -22561.59610642114, "sku": 153, "share_pp": 0.01351627518997763}, "offline": {"new_price": 399.6616384406196, "cur_price": 397.8366809041638, "price_pct": 0.004587202799672063, "rev_pct": -0.001930970929110222, "gm_pct": 0.003937665904660474, "units_pct": -0.006484119938941332, "rev_rub": -1776648.968775488, "gm_rub": 1607685.819900568, "units": -16552.44869526484, "sku": 139, "share_pp": 0.0004657018777522864}, "total": {"new_price": 402.5543002309649, "cur_price": 399.8942092444228, "price_pct": 0.006651986763119622, "rev_pct": 0.001112300569496779, "gm_pct": 0.007892843386118202, "units_pct": -0.005495003054164803, "rev_rub": 2868367.242800394, "gm_rub": 9078837.316729812, "units": -39114.04480168598, "sku": 159, "share_pp": 0.01398197706772991}}, {"name": "Напитки", "online": {"new_price": 125.8983892285692, "cur_price": 124.6102019074795, "price_pct": 0.01033773560567863, "rev_pct": 0.007637179148500595, "gm_pct": 0.01571799220644347, "units_pct": -0.002646745294794885, "rev_rub": 4112479.356778105, "gm_rub": 4526575.625666871, "units": -13777.44357093044, "sku": 99, "share_pp": 0.009983677664692804}, "offline": {"new_price": 124.0648339087491, "cur_price": 122.7639059513636, "price_pct": 0.0105969905999963, "rev_pct": 0.006880744588317023, "gm_pct": 0.0171121319002249, "units_pct": -0.003666552030411884, "rev_rub": 4226316.58008435, "gm_rub": 5539696.562662831, "units": -22098.56671889803, "sku": 106, "share_pp": 0.01239891805476633}, "total": {"new_price": 124.915017012057, "cur_price": 123.6195269363262, "price_pct": 0.01047965566473996, "rev_pct": 0.007234109863418441, "gm_pct": 0.01645579153902411, "units_pct": -0.003193947386118699, "rev_rub": 8338795.936862456, "gm_rub": 10066272.1883297, "units": -35876.01028982847, "sku": 106, "share_pp": 0.02238259571945914}}, {"name": "Нон-Фуд", "online": {"new_price": 45.67527310132609, "cur_price": 44.49294673510933, "price_pct": 0.02657334370896569, "rev_pct": 0.02545239182332231, "gm_pct": 0.05039308346182553, "units_pct": -0.0009576216864485149, "rev_rub": 14977910.64375229, "gm_rub": 16718072.15413407, "units": -15361.56418633344, "sku": 233, "share_pp": 0.04334818249278165}, "offline": {"new_price": 43.77983227648573, "cur_price": 43.24123217752191, "price_pct": 0.0124557065523172, "rev_pct": 0.008643267568609229, "gm_pct": 0.02882570167465258, "units_pct": -0.003651659831299657, "rev_rub": 2166900.857125488, "gm_rub": 3969875.93501735, "units": -25675.62462562854, "sku": 221, "share_pp": 0.009693253262449755}, "total": {"new_price": 45.09873381900725, "cur_price": 44.11149495575614, "price_pct": 0.02238053514716087, "rev_pct": 0.02043063830982371, "gm_pct": 0.04406629144616617, "units_pct": -0.001778612093382498, "rev_rub": 17144811.50087778, "gm_rub": 20687948.08915142, "units": -41037.18881196198, "sku": 236, "share_pp": 0.0530414357552314}}, {"name": "Овощи. Фрукты. Грибы. Зелень", "online": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": 0}, "offline": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": -0.01289752497884156}, "total": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": -0.01289752497884156}}, {"name": "Отдел без упаковки", "online": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": 0}, "offline": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": -0.0005550657301365246}, "total": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": -0.0005550657301365246}}, {"name": "Рыба. Морепродукты", "online": {"new_price": 386.4160819435845, "cur_price": 379.4970874501967, "price_pct": 0.01823200947305259, "rev_pct": 0.008449922129845803, "gm_pct": 0.02799792333382351, "units_pct": -0.009615383390660058, "rev_rub": 5089391.678320259, "gm_rub": 7845079.062197133, "units": -17056.21162992183, "sku": 113, "share_pp": 0.019048706713253}, "offline": {"new_price": 380.872951125347, "cur_price": 374.4501671296408, "price_pct": 0.0171525734517366, "rev_pct": -0.0009931572888132196, "gm_pct": 0.01933981150115565, "units_pct": -0.01768889186506345, "rev_rub": -751271.2625064084, "gm_rub": 6722655.929199842, "units": -39939.921516501, "sku": 115, "share_pp": 0.01524114769626619}, "total": {"new_price": 383.3229398716227, "cur_price": 376.670653843128, "price_pct": 0.01766074941231066, "rev_pct": 0.003192733998701408, "gm_pct": 0.02320407704183812, "units_pct": -0.01413680125138296, "rev_rub": 4338120.41581385, "gm_rub": 14567734.99139697, "units": -56996.13314642283, "sku": 116, "share_pp": 0.03428985440951937}}, {"name": "Сладости, кондитерские изделия", "online": {"new_price": 166.9692047527212, "cur_price": 166.0692643975018, "price_pct": 0.005419066306365572, "rev_pct": 0.003462404344953608, "gm_pct": 0.007514703330946879, "units_pct": -0.001930733316220463, "rev_rub": 1978055.273393654, "gm_rub": 2283727.056542021, "units": -8047.47735377993, "sku": 73, "share_pp": 0.003501631360186552}, "offline": {"new_price": 163.5416294284299, "cur_price": 162.3837513498685, "price_pct": 0.007130504554403672, "rev_pct": 0.004745764594275677, "gm_pct": 0.01080996786864295, "units_pct": -0.002361524558104326, "rev_rub": 5251800.836558775, "gm_rub": 6241456.266025499, "units": -19499.04923547827, "sku": 88, "share_pp": 0.01175021794318394}, "total": {"new_price": 164.6917682675745, "cur_price": 163.6200876683754, "price_pct": 0.006549810689328472, "rev_pct": 0.004308809449762241, "gm_pct": 0.009673627874519681, "units_pct": -0.002217012016389755, "rev_rub": 7229856.109952429, "gm_rub": 8525183.32256752, "units": -27546.5265892582, "sku": 112, "share_pp": 0.0152518493033698}}, {"name": "Сухофрукты. Сушеные грибы, ягоды. Орехи", "online": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": 0}, "offline": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": -0.001726790017277102}, "total": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": -0.001726790017277102}}, {"name": "Сыры", "online": {"new_price": 265.2067313396643, "cur_price": 264.6418635305358, "price_pct": 0.002134461273785915, "rev_pct": 0.001692590616035599, "gm_pct": 0.003797594757304257, "units_pct": -0.0004435699848889751, "rev_rub": 812148.0585015726, "gm_rub": 903706.2242321068, "units": -886.6739102594064, "sku": 17, "share_pp": 0.000263168115035347}, "offline": {"new_price": 261.5891536460374, "cur_price": 260.8214900407154, "price_pct": 0.002943252893778503, "rev_pct": 0.001212055460786418, "gm_pct": 0.004122912195920057, "units_pct": -0.001704867809725252, "rev_rub": 627633.4987559778, "gm_rub": 1043851.657383936, "units": -3731.622895427394, "sku": 27, "share_pp": 0.0004501530151285356}, "total": {"new_price": 263.3170790765238, "cur_price": 262.6450767831124, "price_pct": 0.002558594669437975, "rev_pct": 0.001443171309042388, "gm_pct": 0.003965292371548679, "units_pct": -0.001102809922528043, "rev_rub": 1439781.55725755, "gm_rub": 1947557.881616043, "units": -4618.2968056868, "sku": 27, "share_pp": 0.0007133211301638825}}, {"name": "Торты, десерты замороженные", "online": {"new_price": 559.9235520944512, "cur_price": 555.0483563293953, "price_pct": 0.008783371231465553, "rev_pct": 0.008879145634115836, "gm_pct": 0.02290592708016062, "units_pct": 0, "rev_rub": 881544.939568064, "gm_rub": 881544.939568064, "units": 0, "sku": 61, "share_pp": 0.001828509608718144}, "offline": {"new_price": 548.55241219165, "cur_price": 544.0072871526254, "price_pct": 0.008354897344875933, "rev_pct": 0.008440836732839227, "gm_pct": 0.02282904379435994, "units_pct": 0, "rev_rub": 389221.1063163757, "gm_rub": 389221.1063163757, "units": 0, "sku": 61, "share_pp": 0.0007861308335433857}, "total": {"new_price": 556.2666726453331, "cur_price": 551.4976253284624, "price_pct": 0.008647448507199451, "rev_pct": 0.008740136358780416, "gm_pct": 0.02288232365012064, "units_pct": 0, "rev_rub": 1270766.04588444, "gm_rub": 1270766.04588444, "units": 0, "sku": 62, "share_pp": 0.002614640442261552}}, {"name": "Торты, пирожные, десерты", "online": {"new_price": 388.464958162888, "cur_price": 383.632807415852, "price_pct": 0.01259577036590098, "rev_pct": 0.0049900316745488, "gm_pct": 0.02004997903623038, "units_pct": -0.007540302159161644, "rev_rub": 4150965.72456451, "gm_rub": 7878335.026624896, "units": -19774.72682742815, "sku": 106, "share_pp": 0.01799205742428842}, "offline": {"new_price": 382.4027994462679, "cur_price": 376.3113577592169, "price_pct": 0.01618723847008785, "rev_pct": -0.004003153391346752, "gm_pct": 0.01339458348610158, "units_pct": -0.01997112250043909, "rev_rub": -4203451.340635975, "gm_rub": 6518290.655142803, "units": -67403.18036438216, "sku": 116, "share_pp": 0.01318480238657795}, "total": {"new_price": 385.07239606234, "cur_price": 379.5127840579347, "price_pct": 0.01464934051749012, "rev_pct": -2.788989277833376e-05, "gm_pct": 0.01636777870795724, "units_pct": -0.01453553842602883, "rev_rub": -52485.61607146423, "gm_rub": 14396625.6817677, "units": -87177.90719181033, "sku": 119, "share_pp": 0.03117685981086638}}, {"name": "Хлеб", "online": {"new_price": 159.953033075965, "cur_price": 152.3022045668291, "price_pct": 0.05023452241479975, "rev_pct": 0.05025000090422325, "gm_pct": 0.1181836259451467, "units_pct": 0, "rev_rub": 8059646.802154081, "gm_rub": 8059646.802154081, "units": 0, "sku": 21, "share_pp": 0.01925208001739964}, "offline": {"new_price": 153.810730132054, "cur_price": 147.7282618992118, "price_pct": 0.04117335542058909, "rev_pct": -0.001476372298714484, "gm_pct": 0.06753923162667246, "units_pct": -0.04046197790595959, "rev_rub": -275217.0831911368, "gm_rub": 5097475.292150302, "units": -56751.82467369606, "sku": 21, "share_pp": 0.0104231890209406}, "total": {"new_price": 156.6673410825774, "cur_price": 149.8085480244939, "price_pct": 0.0457837229485869, "rev_pct": 0.02244610319622288, "gm_pct": 0.09157860931142614, "units_pct": -0.02205936612090986, "rev_rub": 7784429.718962944, "gm_rub": 13157122.09430438, "units": -56751.82467369606, "sku": 21, "share_pp": 0.02967526903834006}}, {"name": "Мировые бренды", "online": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": 0}, "offline": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": -0.008342029023070824}, "total": {"new_price": null, "cur_price": null, "price_pct": null, "rev_pct": null, "gm_pct": null, "units_pct": null, "rev_rub": null, "gm_rub": null, "units": null, "sku": null, "share_pp": -0.008342029023070824}}], "sched": {"by_date": [["17.10", 351], ["18.10", 357], ["19.10", 350], ["20.10", 357], ["21.10", 127]]}, "price_bins": {"online": {"n": 1720, "median": 0.02531645569620244, "bins": [["снижение", 7], ["до 1%", 265], ["1–2%", 368], ["2–3%", 381], ["3–5%", 387], ["5–10%", 229], ["> 10%", 83]], "up": 1713, "by_date": [["17.10", 1713], ["18.10", 0], ["19.10", 0], ["20.10", 0], ["21.10", 0]]}, "offline": {"n": 1519, "median": 0.02439024390243905, "bins": [["снижение", 2], ["до 1%", 298], ["1–2%", 286], ["2–3%", 318], ["3–5%", 321], ["5–10%", 267], ["> 10%", 27]], "up": 1517, "by_date": [["17.10", 338], ["18.10", 357], ["19.10", 344], ["20.10", 352], ["21.10", 126]]}}, "method": {"products": 1839, "groups": 18, "with_comp": 455, "pairs": 1535, "nets": 8, "median": 0.02499999999999991, "le3": 0.5913312693498453, "kvi": 118, "kvi_up": 24}}</script>
+
+<!-- Факт по неделям: доля маржи и жалобы. -->
+<script type="application/json" id="post">{"bdr": [{"week": 907, "label": "21.09–27.09", "rev": 7553648280.89911, "gm": 3886213050.74094, "gm_share": 0.514481599648742, "rc_share": 0.481181497820299, "ad_share": 0.432414133672832}, {"week": 908, "label": "28.09–04.10", "rev": 7559363019.15932, "gm": 3876099281.40811, "gm_share": 0.512754748195592, "rc_share": 0.479352063909418, "ad_share": 0.429368097238053}, {"week": 909, "label": "05.10–11.10", "rev": 7659730189.81231, "gm": 3920705876.89677, "gm_share": 0.511859527651696, "rc_share": 0.478835811196436, "ad_share": 0.429622043412301}, {"week": 910, "label": "12.10–18.10", "rev": 7744773560.66356, "gm": 3979905218.74393, "gm_share": 0.51388270910311, "rc_share": 0.481574855213641, "ad_share": 0.43376159903447}, {"week": 911, "label": "19.10–25.10", "rev": 7824617906.73622, "gm": 4054276160.74953, "gm_share": 0.518143660057726, "rc_share": 0.485288455462079, "ad_share": 0.437571589095746}, {"week": 912, "label": "26.10–01.11", "rev": 7767551437.05902, "gm": 4046697290.80478, "gm_share": 0.520974637064902, "rc_share": 0.487154946946598, "ad_share": 0.43801950826649}], "compl": {"weeks": [{"week": 891, "label": "01.06", "all": 327, "up": 70}, {"week": 892, "label": "08.06", "all": 355, "up": 52}, {"week": 893, "label": "15.06", "all": 365, "up": 61}, {"week": 894, "label": "22.06", "all": 410, "up": 74}, {"week": 895, "label": "29.06", "all": 235, "up": 38}, {"week": 896, "label": "06.07", "all": 240, "up": 49}, {"week": 897, "label": "13.07", "all": 190, "up": 34}, {"week": 898, "label": "20.07", "all": 184, "up": 45}, {"week": 899, "label": "27.07", "all": 205, "up": 43}, {"week": 900, "label": "03.08", "all": 166, "up": 25}, {"week": 901, "label": "10.08", "all": 171, "up": 39}, {"week": 902, "label": "17.08", "all": 175, "up": 38}, {"week": 903, "label": "24.08", "all": 154, "up": 30}, {"week": 904, "label": "31.08", "all": 164, "up": 27}, {"week": 905, "label": "07.09", "all": 161, "up": 36}, {"week": 906, "label": "14.09", "all": 182, "up": 31}, {"week": 907, "label": "21.09", "all": 183, "up": 49}, {"week": 908, "label": "28.09", "all": 210, "up": 46}, {"week": 909, "label": "05.10", "all": 209, "up": 33}, {"week": 910, "label": "12.10", "all": 290, "up": 76}, {"week": 911, "label": "19.10", "all": 275, "up": 87}, {"week": 912, "label": "26.10", "all": 257, "up": 57}], "cats_all": [{"name": "Овощи. Фрукты. Грибы. Зелень", "before": 87, "after": 130}, {"name": "Кулинария", "before": 95, "after": 98}, {"name": "Рыба. Морепродукты", "before": 54, "after": 89}, {"name": "Мировые бренды", "before": 43, "after": 51}, {"name": "Мясо. Птица. П/ф охл. Яйца", "before": 40, "after": 51}, {"name": "Торты, пирожные, десерты", "before": 41, "after": 50}, {"name": "Хлеб", "before": 29, "after": 49}, {"name": "Нон-Фуд", "before": 34, "after": 43}, {"name": "Молочная Продукция", "before": 28, "after": 39}, {"name": "Сладости, кондитерские изделия", "before": 31, "after": 35}, {"name": "Мясные деликатесы. Колбасы", "before": 22, "after": 28}, {"name": "Сухофрукты. Сушеные грибы, ягоды. Орехи", "before": 7, "after": 21}, {"name": "Напитки", "before": 6, "after": 20}, {"name": "РНД", "before": 18, "after": 15}, {"name": "Бакалея", "before": 7, "after": 17}, {"name": "Замороженные п/ф", "before": 12, "after": 16}, {"name": "Кафе", "before": 6, "after": 14}, {"name": "Сыры", "before": 6, "after": 10}, {"name": "Отдел без упаковки", "before": 7, "after": 9}, {"name": "Торты, десерты замороженные", "before": 5, "after": 9}, {"name": "ДаркКитчен", "before": 8, "after": 6}, {"name": "Консервация", "before": 5, "after": 7}, {"name": "Пекарня", "before": 2, "after": 6}, {"name": "Алкоголь", "before": 3, "after": 4}, {"name": "Детское питание", "before": 2, "after": 2}, {"name": "Мороженое", "before": 2, "after": 0}, {"name": "Кулинария ШефВилл", "before": 1, "after": 0}, {"name": "Региональная полка", "before": 1, "after": 0}, {"name": "Региональная полка Поволжье", "before": 0, "after": 1}, {"name": "Региональная полка СПб", "before": 0, "after": 1}, {"name": "Рыбная витрина", "before": 0, "after": 1}], "cats_up": [{"name": "Мясо. Птица. П/ф охл. Яйца", "before": 25, "after": 33}, {"name": "Нон-Фуд", "before": 4, "after": 29}, {"name": "Торты, пирожные, десерты", "before": 27, "after": 29}, {"name": "Кулинария", "before": 16, "after": 26}, {"name": "Рыба. Морепродукты", "before": 14, "after": 19}, {"name": "Хлеб", "before": 8, "after": 16}, {"name": "Бакалея", "before": 5, "after": 13}, {"name": "Сладости, кондитерские изделия", "before": 13, "after": 9}, {"name": "Замороженные п/ф", "before": 4, "after": 9}, {"name": "Торты, десерты замороженные", "before": 4, "after": 9}, {"name": "Мясные деликатесы. Колбасы", "before": 4, "after": 8}, {"name": "Молочная Продукция", "before": 2, "after": 7}, {"name": "Напитки", "before": 1, "after": 7}, {"name": "Консервация", "before": 1, "after": 3}, {"name": "Кафе", "before": 0, "after": 2}, {"name": "Сыры", "before": 0, "after": 1}], "before": [907, 908, 909], "after": [910, 911, 912], "up_products": 1839, "up_products_with_compl": 571, "index": [{"week": 891, "cur": 0.0701230548573855, "prev": 0.118459781336199}, {"week": 892, "cur": 0.0779837310810318, "prev": 0.124271654526102}, {"week": 893, "cur": 0.0817266810037216, "prev": 0.132264052527302}, {"week": 894, "cur": 0.0931476880221297, "prev": 0.118112411899472}, {"week": 895, "cur": 0.0531488656075749, "prev": 0.164660620681159}, {"week": 896, "cur": 0.0558388926961449, "prev": 0.173514892429972}, {"week": 897, "cur": 0.0448005411528104, "prev": 0.184207073912263}, {"week": 898, "cur": 0.043444720195626, "prev": 0.182512225147081}, {"week": 899, "cur": 0.0486133160755972, "prev": 0.154730056734193}, {"week": 900, "cur": 0.038603426626188, "prev": 0.133239956959368}, {"week": 901, "cur": 0.0398646857352591, "prev": 0.13748963289642}, {"week": 902, "cur": 0.0405883991211753, "prev": 0.132223835873733}, {"week": 903, "cur": 0.034660586209543, "prev": 0.125073931414053}, {"week": 904, "cur": 0.0347439298223462, "prev": 0.157528089610244}, {"week": 905, "cur": 0.034540597291026, "prev": 0.151576449144352}, {"week": 906, "cur": 0.0390255868472622, "prev": 0.176006604538378}, {"week": 907, "cur": 0.0387712546189435, "prev": 0.156680810511149}, {"week": 908, "cur": 0.0445351783904287, "prev": 0.125463967589999}, {"week": 909, "cur": 0.043474528409013, "prev": 0.146696371781754}, {"week": 910, "cur": 0.0598575889915289, "prev": 0.158343103111401}, {"week": 911, "cur": 0.056632226859063, "prev": 0.152316650728232}, {"week": 912, "cur": 0.0536460529446882, "prev": 0.147422553241421}], "stat": {"oth_b": 474, "oth_a": 602, "oth_na": 440, "oth_grow": 377, "oth_grow1": 328, "oth_nb": 362, "up_b": 128, "up_a": 220, "up_na": 172, "up_grow": 144, "up_grow1": 123, "up_nb": 108}, "prod_up": [{"name": "Наполнитель для кошачьего туалета, комкующийся, 5 кг", "cat": "Нон-Фуд", "before": 0, "after": 10, "price": 0.15120136273982432}, {"name": "Рулетики из баклажанов с сырной начинкой", "cat": "Кулинария", "before": 0, "after": 5, "price": 0.05128205128205132}, {"name": "Батон \"Молодежная классика\", нарезка", "cat": "Хлеб", "before": 1, "after": 5, "price": 0.05086206896551726}, {"name": "Форель филе-кусок с кожей малосоленая зам., 500 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 4, "price": 0.05562579013906443}, {"name": "Суп-пюре \"Сырный\" с гренками, 260 г", "cat": "Кулинария", "before": 0, "after": 3, "price": 0.020344827586206926}, {"name": "Вырезка из кролика", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 3, "price": 0.004124149659863963}, {"name": "Вода минеральная \"Легенда гор Архыз\", негаз., 5 л", "cat": "Напитки", "before": 0, "after": 2, "price": 0.02105911330049259}, {"name": "Галета с вишней, 160 г", "cat": "Торты, пирожные, десерты", "before": 0, "after": 2, "price": 0.01449351467730919}, {"name": "Жвачка натуральная со вкусом \"Арбуз\"", "cat": "Бакалея", "before": 0, "after": 2, "price": 0.01588201928530919}, {"name": "Корм влажный для кошек \"Ассорти с индейкой\" в соусе, 85 гр", "cat": "Нон-Фуд", "before": 0, "after": 2, "price": 0.09192331866750467}, {"name": "Котлеты \"Мамины\" (жареные), зам.", "cat": "Замороженные п/ф", "before": 0, "after": 2, "price": 0.027256663619101174}, {"name": "Меренга французская с тыкв. семечками", "cat": "Торты, пирожные, десерты", "before": 0, "after": 2, "price": 0.04219484403931073}, {"name": "Меренга французская с тыкв. семечками и вишней", "cat": "Торты, пирожные, десерты", "before": 0, "after": 2, "price": 0.03671864587498341}, {"name": "Набор пирожных \"Суфле, Медовик, Эклер\"", "cat": "Торты, пирожные, десерты", "before": 0, "after": 2, "price": 0.04066345639379354}, {"name": "Пакет для мусора 60 литров, 20 шт", "cat": "Нон-Фуд", "before": 0, "after": 2, "price": 0.08316683316683315}, {"name": "Пастила хрустящая яблочно-смородиновая", "cat": "Бакалея", "before": 0, "after": 2, "price": 0.01485148514851486}, {"name": "Печень трески атлантич. натуральная кусочками ст/б, 130 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 2, "price": 0.06595092024539873}, {"name": "Торт \"Наполеон\" 740г", "cat": "Торты, пирожные, десерты", "before": 0, "after": 2, "price": 0.01247771836007128}, {"name": "Фарш из телятины, 360 г", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 2, "price": 0.009592822636300902}, {"name": "Филе куриной грудки с перцем и чесноком", "cat": "Мясные деликатесы. Колбасы", "before": 0, "after": 2, "price": 0.06489428826103949}, {"name": "Холодец говядина-курица", "cat": "Мясные деликатесы. Колбасы", "before": 0, "after": 2, "price": 0.034250190604656616}, {"name": "Голень цыпленка-бройлера", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 2, "price": 0.004566210045662045}, {"name": "Десерт \"Баноффи\" с бананом и маскарпоне", "cat": "Торты, пирожные, десерты", "before": 1, "after": 2, "price": 0.0272481587075315}, {"name": "Куриное филе гриль с киноа и овощами", "cat": "Кулинария", "before": 1, "after": 2, "price": 0.004901960784313708}, {"name": "Пирог с семгой, брокколи и брынзой", "cat": "Хлеб", "before": 1, "after": 2, "price": 0.04878061677735945}, {"name": "Яйцо куриное от кур свободного выгула (С1)", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 2, "price": 0.009132610508757244}, {"name": "Батончик протеиновый \"Манго-пудинг\"", "cat": "Бакалея", "before": 0, "after": 1, "price": 0.022076612903225823}, {"name": "Бедро цыпленка бройлера", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.004608294930875667}, {"name": "Бескостное мясо бедра цыпленка-бройлера в маринаде \"Сладкий чили\"", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.003100842275297055}, {"name": "Бескостное мясо бедра цыплят-бройлеров Халяль", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.0026666856297644648}, {"name": "Блинчики с вишней и Рикоттой, зам., 400г", "cat": "Замороженные п/ф", "before": 0, "after": 1, "price": 0.028370221327967737}, {"name": "Блины с яблоком, 210 г", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.04880952380952386}, {"name": "Борщ с говядиной", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.01754385964912286}, {"name": "Булочка сырная \"Пармезан и Чеддер\" без глютена зам. 3 шт", "cat": "Торты, десерты замороженные", "before": 0, "after": 1, "price": 0.02508058809654845}, {"name": "Бумага туалетная влажная с Алоэ, 30 шт", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.07885391444713474}, {"name": "Вареники с картофелем и белыми грибами", "cat": "Замороженные п/ф", "before": 0, "after": 1, "price": 0.02918285199572146}, {"name": "Вареники с картофелем и грибами", "cat": "Замороженные п/ф", "before": 0, "after": 1, "price": 0.028624830376116964}, {"name": "Вертута с капустой", "cat": "Хлеб", "before": 0, "after": 1, "price": 0.049509803921568674}, {"name": "Вода питьевая негазированная, 5 л", "cat": "Напитки", "before": 0, "after": 1, "price": 0.02564102564102555}, {"name": "Гель-концентрат для стирки деликатных тканей \"Роза-мускус\", 1.2 л", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.0780637491163807}, {"name": "Говядина для бульона без кости", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.01724137931034475}, {"name": "Говядина для тушения, 400 г", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.009355509355509328}, {"name": "Говядина томленая в гранатовом соке с картофельным пюре и фасолью", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.029437229437229373}, {"name": "Дорадо филе на коже зам., 290 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 1, "price": 0.08695652173913038}, {"name": "Ежики мясные с отварной гречкой", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.04173913043478261}, {"name": "Жидкость для снятия всех видов лака \"Кератиновая\", 110 мл", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.02409638554216875}, {"name": "Запеканка творожная с клубникой без добавленного сахара", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.023355143584151136}, {"name": "Зефир \"Классический\" в шок. глазури", "cat": "Сладости, кондитерские изделия", "before": 0, "after": 1, "price": 0.023840698308783433}, {"name": "Кальмар командорский тушка очищенная судовой заморозки, 500 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 1, "price": 0.12734354422903485}, {"name": "Коктейль из морепродуктов в масле, 180 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 1, "price": 0.01786283891547047}, {"name": "Комбо-набор: Котлета куриная с картофельным пюре и Салат \"Витаминный\" с лимонной заправкой", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.1066856330014225}, {"name": "Комбуча со стевией, 330 мл", "cat": "Напитки", "before": 0, "after": 1, "price": 0.036375661375661394}, {"name": "Конфеты суфле манго-маракуйя в белом шоколаде", "cat": "Сладости, кондитерские изделия", "before": 0, "after": 1, "price": 0.01935483870967736}, {"name": "Корзиночки \"Крем-брюле\" с крем-чиз, 2 шт.", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.03780834914611009}, {"name": "Корзиночки-мини \"Малина-клубника\" с масляным кремом, 4 шт", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.031427330847894175}, {"name": "Корм влажный для кошек \"Ассорти с ягненком\" в соусе, 85 гр", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.09192331866750467}, {"name": "Корм влажный для собак, говядина ж/б, 340 гр", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.1211050013092432}, {"name": "Корм сухой для щенков и юниоров мелких и миниатюрных пород \"Индейка и ягненок\"", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.09575075579442395}, {"name": "Котлеты из мяса цыплёнка-бройлера и индейки с моцареллой", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.005128339995792097}, {"name": "Котлеты из телятины", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.047410403325469086}, {"name": "Котлеты из цыпленка-бройлера со сливочным маслом и укропом", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.003846210742762479}, {"name": "Кофе \"Венский\" молотый", "cat": "Бакалея", "before": 0, "after": 1, "price": 0.03803059685412624}, {"name": "Кофе жареный молотый", "cat": "Бакалея", "before": 0, "after": 1, "price": 0.02040816326530615}, {"name": "Кофе натуральный жареный молотый с ароматом миндаля", "cat": "Бакалея", "before": 0, "after": 1, "price": 0.03027396586493536}, {"name": "Крекер \"Хрустящий\" с солью", "cat": "Сладости, кондитерские изделия", "before": 0, "after": 1, "price": 0.02777777777777768}, {"name": "Круассан классический, веган зам. 3 шт (выпекаем дома)", "cat": "Торты, десерты замороженные", "before": 0, "after": 1, "price": 0.021933621933621916}, {"name": "Леденцы живица кедра, прополис и шалфей", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.04751007954669284}, {"name": "Лимоны дробленые с имбирем и медом", "cat": "Консервация", "before": 0, "after": 1, "price": 0.03664921465968596}, {"name": "Мед натуральный \"Луговые медоносы\", 500 г", "cat": "Консервация", "before": 0, "after": 1, "price": 0.04020100502512558}, {"name": "Мойва зам., 500 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 1, "price": 0.05555555555555558}, {"name": "Набор для супа из индейки", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.006154079207733365}, {"name": "Наггетсы куриные, 250 г", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.0077248866618945256}, {"name": "Напиток \"0 калорий\" со вкусом персика, газированный, 1 л", "cat": "Напитки", "before": 0, "after": 1, "price": 0.020942982456140347}, {"name": "Напиток травяной с грушей и черной смородиной витаминизированный, 330 мл", "cat": "Напитки", "before": 0, "after": 1, "price": 0.01956928838951311}, {"name": "Отбеливатель кислородный", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.0948062222006959}, {"name": "Палочки из форели радужной холодного копчения, 100 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 1, "price": 0.02325581395348841}, {"name": "Панини с курицей-гриль, моцареллой и огуречным релишем, кафе", "cat": "Кафе", "before": 0, "after": 1, "price": 0.03803656137915079}, {"name": "Паста \"Болоньезе\"", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.032258064516129}, {"name": "Паста-салат с соусом песто, индейкой, сыром и вялеными томатами", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.032258064516129}, {"name": "Пельмени без глютена с индейкой", "cat": "Замороженные п/ф", "before": 0, "after": 1, "price": 0.027377871239081197}, {"name": "Перчатки виниловые для контакта с пищевой продукцией, 50 пар, размер М", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.08567961165048542}, {"name": "Песочная полоска с брусничной начинкой", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.02469512195121948}, {"name": "Песочная полоска с повидлом", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.04225352112676051}, {"name": "Печенье \"Трещинки апельсиновые\"", "cat": "Сладости, кондитерские изделия", "before": 0, "after": 1, "price": 0.018674750234821905}, {"name": "Печенье песочное \"Тающее удовольствие\"", "cat": "Сладости, кондитерские изделия", "before": 0, "after": 1, "price": 0.007030072401097209}, {"name": "Печенье сахарное \"Дарушка\"", "cat": "Сладости, кондитерские изделия", "before": 0, "after": 1, "price": 0.04762579730687455}, {"name": "Пирожное \"Канелли\"", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.019360269360269355}, {"name": "Пирожное \"Морковка\" зам.", "cat": "Торты, десерты замороженные", "before": 0, "after": 1, "price": 0.020479962721342}, {"name": "Полотенца бумажные, 2 слоя,180 листов", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.0923380409106901}, {"name": "Полотенца универсальные, 200 листов", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.10688775510204074}, {"name": "Риет из тунца с оливками, 115 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 1, "price": 0.03184713375796178}, {"name": "Рис с куриной бризолью", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.032258064516129}, {"name": "Ромашка для заваривания, в пакетиках", "cat": "Бакалея", "before": 0, "after": 1, "price": 0.025015634771732298}, {"name": "Ряженка \"Морошка\", 250 г", "cat": "Молочная Продукция", "before": 0, "after": 1, "price": 0.027402402402402326}, {"name": "Ряженка 3,2% в бутылке, 290 г", "cat": "Молочная Продукция", "before": 0, "after": 1, "price": 0.04411764705882359}, {"name": "Салат \"Цезарь\"", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.002932551319648091}, {"name": "Сало белорусское", "cat": "Мясные деликатесы. Колбасы", "before": 0, "after": 1, "price": 0.021153119050335678}, {"name": "Салфетки влажные антибактериальные, 15 шт", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.10485893416927893}, {"name": "Салфетки влажные антисептические спирт., 50 шт", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.07670454545454541}, {"name": "Салфетки влажные гигиенические с термальной водой, 100 шт", "cat": "Нон-Фуд", "before": 0, "after": 1, "price": 0.05319095159863518}, {"name": "Сельдь тихоокеан. филе без кожи соленая с петрушкой, 200 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 1, "price": 0.022739018087855275}, {"name": "Семга филе-кусок на коже охл., 350 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 1, "price": 0.1083333333333334}, {"name": "Сок томатный с мякотью восстановленный, 1 л", "cat": "Напитки", "before": 0, "after": 1, "price": 0.02906976744186052}, {"name": "Соус \"Песто Фреш с зелёным базиликом\"", "cat": "Бакалея", "before": 0, "after": 1, "price": 0.0135135135135136}, {"name": "Студень Домашний", "cat": "Мясные деликатесы. Колбасы", "before": 0, "after": 1, "price": 0.020622852672041336}, {"name": "Суп Харчо, замороженный, 1 кг", "cat": "Замороженные п/ф", "before": 0, "after": 1, "price": 0.01482886337243261}, {"name": "Суп корейский с морскими водорослями, 10 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 1, "price": 0.05043545693151996}, {"name": "Сыр козий \"Адыгейский\", 150 г", "cat": "Сыры", "before": 0, "after": 1, "price": 0.009884920204103809}, {"name": "Сырники \"Нежные\" зам., 600 г", "cat": "Замороженные п/ф", "before": 0, "after": 1, "price": 0.0255503572335255}, {"name": "Сэндвич ролл \"Цезарь\"", "cat": "Кулинария", "before": 0, "after": 1, "price": 0.004385964912280604}, {"name": "Тарталетка \"Клубника с сырным кремом\"", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.05240477106579455}, {"name": "Творог 5%, 180 г", "cat": "Молочная Продукция", "before": 0, "after": 1, "price": 0.02777777777777779}, {"name": "Творог 9%, 400 г", "cat": "Молочная Продукция", "before": 0, "after": 1, "price": 0.01974637681159419}, {"name": "Творог для сырников 5%, 200 г", "cat": "Молочная Продукция", "before": 0, "after": 1, "price": 0.03030998851894373}, {"name": "Творог обезжиренный, 180 г", "cat": "Молочная Продукция", "before": 0, "after": 1, "price": 0.009304137095378251}, {"name": "Торт \"Белые ночи\" с сырным кремом, 1,1 кг", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.01496187465129262}, {"name": "Торт \"Вишневое настроение\" зам.", "cat": "Торты, десерты замороженные", "before": 0, "after": 1, "price": 0.00679024638498904}, {"name": "Торт \"Медовик\" зам.", "cat": "Торты, десерты замороженные", "before": 0, "after": 1, "price": 0.006032074043890834}, {"name": "Торт \"Монтблан\"", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.01498316498316499}, {"name": "Торт \"Тирамису\", веган", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.005618150949220468}, {"name": "Торт блинный шоколадный, 1 кг", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.017301463920196936}, {"name": "Торт домашний \"Наполеон\"", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.013661610129001356}, {"name": "Торт песочный \"Ягодный\" зам. 500", "cat": "Торты, десерты замороженные", "before": 0, "after": 1, "price": 0.008237791240527259}, {"name": "Трубочки вафельные \"Домашние\" (без начинки)", "cat": "Сладости, кондитерские изделия", "before": 0, "after": 1, "price": 0.02617801047120416}, {"name": "Улитка слоеная с корицей", "cat": "Хлеб", "before": 0, "after": 1, "price": 0.05019669551534223}, {"name": "Фарш из индейки, 500 г", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.004540441365946113}, {"name": "Филе бедра цыпленка на зерновом откорме", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.01842710826664473}, {"name": "Филе малое цыпленка-бройлера", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.008839821009644646}, {"name": "Форель кусок (хвостовая часть) зам., 400 г", "cat": "Рыба. Морепродукты", "before": 0, "after": 1, "price": 0.1152579830416741}, {"name": "Хашбраун с жареным луком, зам.", "cat": "Замороженные п/ф", "before": 0, "after": 1, "price": 0.01058230683090711}, {"name": "Хлеб \"Двухсолодовый\" с пророщенным зерном, нарезка", "cat": "Хлеб", "before": 0, "after": 1, "price": 0.0476212513883747}, {"name": "Хлеб \"На кефире с сывороткой\", нарезка", "cat": "Хлеб", "before": 0, "after": 1, "price": 0.05378831694621167}, {"name": "Чай черный с мятой в пирамидках", "cat": "Бакалея", "before": 0, "after": 1, "price": 0.03846153846153855}, {"name": "Черная смородина протертая с сахаром", "cat": "Консервация", "before": 0, "after": 1, "price": 0.04255319148936176}, {"name": "Чизкейк мини \"Нью-Йорк\"", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.010584677419354871}, {"name": "Чипсы протеиновые \"Лесные грибы\"", "cat": "Бакалея", "before": 0, "after": 1, "price": 0.03358585858585861}, {"name": "Шаурма с курицей и с cоусом \"Тандури\", кафе", "cat": "Кафе", "before": 0, "after": 1, "price": 0.03597122302158273}, {"name": "Шейка свиная без кости", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.003570066797531468}, {"name": "Шницель из мяса цыплят-бройлеров в кукурузной панировке", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.0076941287878787845}, {"name": "Щечка телячья томленая", "cat": "Мясные деликатесы. Колбасы", "before": 0, "after": 1, "price": 0.01654561532500054}, {"name": "Эклер \"Ванильный\"", "cat": "Торты, пирожные, десерты", "before": 0, "after": 1, "price": 0.047096515818982776}, {"name": "Язык говяжий, охлажденный", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.0039037085230969604}, {"name": "Яйцо куриное С0", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.01418439716312059}, {"name": "Яйцо перепелиное пищевое фермерское 20шт", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 0, "after": 1, "price": 0.008810572687224738}, {"name": "Салат \"Витаминный\" с лимонной заправкой", "cat": "Кулинария", "before": 2, "after": 2, "price": 0.02925925925925932}, {"name": "Торт шоколадно-ореховый с черносливом зам.", "cat": "Торты, десерты замороженные", "before": 2, "after": 2, "price": 0.004065040650406582}, {"name": "Булочка \"Свердловская\", слоено-дрожжевая", "cat": "Хлеб", "before": 1, "after": 1, "price": 0.049226554946825596}, {"name": "Грудинка варено-копченая, 300 г", "cat": "Мясные деликатесы. Колбасы", "before": 1, "after": 1, "price": 0.018797590233733175}, {"name": "Изделие х/б \"Цельнозерновой\" полбяной с семенами льна", "cat": "Хлеб", "before": 1, "after": 1, "price": 0.04964788732394365}, {"name": "Картофель жареный с грибами, 500 г", "cat": "Кулинария", "before": 1, "after": 1, "price": 0.015506464365851125}, {"name": "Кейс-торт \"Наполеон молочный\"", "cat": "Торты, пирожные, десерты", "before": 1, "after": 1, "price": 0.018832201185142394}, {"name": "Конвертики с курицей, шпинатом и сыром", "cat": "Хлеб", "before": 1, "after": 1, "price": 0.05068476400097822}, {"name": "Корм влажный для собак, индейка ж/б, 340 гр", "cat": "Нон-Фуд", "before": 1, "after": 1, "price": 0.09309611237395807}, {"name": "Котлета натуральная из индейки, 500 г", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 1, "price": 0.0039025318865409937}, {"name": "Мороженое сливочное в печенье макарон \"Соленая карамель\"", "cat": "Торты, десерты замороженные", "before": 1, "after": 1, "price": 0.02258652094717661}, {"name": "Паста \"Карбонара\" со сливками", "cat": "Кулинария", "before": 1, "after": 1, "price": 0.005434782608695565}, {"name": "Паста цельнозерновая с тунцом и запеченными томатами", "cat": "Кулинария", "before": 1, "after": 1, "price": 0.005832143100047649}, {"name": "Пахлава с фисташкой", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 1, "price": 0.013888888888888838}, {"name": "Плюшка сдобная с посыпкой 2 шт", "cat": "Хлеб", "before": 1, "after": 1, "price": 0.050857632933104635}, {"name": "Ряженка 4%, 900 г", "cat": "Молочная Продукция", "before": 1, "after": 1, "price": 0.01875000000000004}, {"name": "Семга слабосоленая ломтики, 100 г", "cat": "Рыба. Морепродукты", "before": 1, "after": 1, "price": 0.02783725910064239}, {"name": "Торт \"Рикейк\" с черносливом и грецким орехом", "cat": "Торты, пирожные, десерты", "before": 1, "after": 1, "price": 0.00885231162903288}, {"name": "Торт блинный шоколадный", "cat": "Торты, пирожные, десерты", "before": 1, "after": 1, "price": 0.008584336302260409}, {"name": "Фарш из мяса курицы, индейки и кролика", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 1, "price": 0.005762135268128743}, {"name": "Филе \"Мини\" цыпленка-бройлера", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 1, "price": 0.041758203438295505}, {"name": "Хлопья овсяные из голозерного овса без глютена", "cat": "Бакалея", "before": 1, "after": 1, "price": 0.009345794392523255}, {"name": "Яйцо куриное СО \"Жёлтики\", 6 шт", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 1, "price": 0.01869322152341024}, {"name": "Ватрушки-мини с творогом, 4 шт", "cat": "Хлеб", "before": 2, "after": 1, "price": 0.05009114385538505}, {"name": "Печенье сдобное \"Творожные ушки\", 300 г", "cat": "Сладости, кондитерские изделия", "before": 2, "after": 1, "price": 0.008510638297872353}, {"name": "\"Буженина для запекания\" из бедра индейки", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.00209869365679205}, {"name": "Ассорти мини-чиабатт курица, омлет, сыр + куриная ветчина, сыр", "cat": "Кулинария", "before": 1, "after": 0, "price": 0.030776515151515138}, {"name": "Ассорти чизкейков, 4 шт", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.015155424685811436}, {"name": "Бисквит \"Пончик лимонно-маковый\", веган", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.023542501112594483}, {"name": "Биточки из индейки с сыром", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.007080200501253131}, {"name": "Бифштекс из говядины с картофелем", "cat": "Кулинария", "before": 1, "after": 0, "price": 0.01754385964912286}, {"name": "Вареники с сыром сулугуни, творогом и зеленью", "cat": "Замороженные п/ф", "before": 1, "after": 0, "price": 0.050736573400644525}, {"name": "Ветчина куриная \"Нежная\"", "cat": "Мясные деликатесы. Колбасы", "before": 1, "after": 0, "price": 0.0048829289180973845}, {"name": "Вок фунчоза с креветками", "cat": "Кулинария", "before": 1, "after": 0, "price": 0.031372934697088906}, {"name": "Голень индейки в маринаде", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.003436679765809747}, {"name": "Десерт \"Морковный на двоих\" с сырно-сливочным кремом", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.016445277210827447}, {"name": "Капкейк \"Морковный\" с сырным кремом, 2 шт", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.02387267904509294}, {"name": "Капуста квашеная с морковью и клюквой", "cat": "Консервация", "before": 1, "after": 0, "price": 0.026543950913698877}, {"name": "Комбо-набор: Грудка куриная с картофелем по-деревенски и Салат из летних овощей", "cat": "Кулинария", "before": 1, "after": 0, "price": 0.1066856330014225}, {"name": "Коржик молочный", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 0, "price": 0.04932228915662651}, {"name": "Крендельки с морской солью в молочном шоколаде", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 0, "price": 0.008849557522123908}, {"name": "Крылья цыплят-бройлеров две части раздельно", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.017889316653705745}, {"name": "Мармелад \"Лимонный\" в сахарной пудре", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 0, "price": 0.02976190476190466}, {"name": "Масло авокадо холодного отжима", "cat": "Бакалея", "before": 1, "after": 0, "price": 0.009732360097323589}, {"name": "Окунь филе на коже зам., 500 г", "cat": "Рыба. Морепродукты", "before": 1, "after": 0, "price": 0.01579877403510177}, {"name": "Паштет из говяжьей печени со сливками запеченный", "cat": "Мясные деликатесы. Колбасы", "before": 1, "after": 0, "price": 0.02163011847848673}, {"name": "Паштет мясной с печенью индейки и грушей", "cat": "Мясные деликатесы. Колбасы", "before": 1, "after": 0, "price": 0.020164240995202865}, {"name": "Печень трески атлантической натуральная, 115 г", "cat": "Рыба. Морепродукты", "before": 1, "after": 0, "price": 0.06106870229007644}, {"name": "Печенье \"Миндально-ореховое\"", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 0, "price": 0.0388457269700333}, {"name": "Печенье \"Мутаки\" с грецким орехом", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 0, "price": 0.006329113924050667}, {"name": "Печенье сдобное с молоком", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 0, "price": 0.10347826086956524}, {"name": "Печенье творожное \"Уголки\"", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 0, "price": 0.009506246962289522}, {"name": "Печенье-сэндвич с суфле и кокосовой карамелью (веган)", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.0092592592592593}, {"name": "Пирог \"Сметанник\" с черникой", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.03325525656389583}, {"name": "Пирожное \"Рикейк\" с черносливом и грецким орехом", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.05121527777777779}, {"name": "Пирожное блинное шоколадное", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.03396616298592281}, {"name": "Пирожные \"Муравейные шарики\"", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.018656972357500523}, {"name": "Пирожные \"Муравейные шарики\", 300 г", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.034774651109585886}, {"name": "Прокладки ежедневные классические, 20 шт", "cat": "Нон-Фуд", "before": 1, "after": 0, "price": 0.05803126039241768}, {"name": "Пряник ржаной с начинкой \"Яблоко-Черёмуха\"", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 0, "price": 0.01470588235294112}, {"name": "Салат винегрет, 180 г", "cat": "Кулинария", "before": 1, "after": 0, "price": 0.06274509803921569}, {"name": "Салат из запеченной свеклы с сыром фета", "cat": "Кулинария", "before": 1, "after": 0, "price": 0.031265577954577184}, {"name": "Салат сельдь под шубой, 300 г", "cat": "Кулинария", "before": 1, "after": 0, "price": 0.006410256410256387}, {"name": "Салфетки бумажные 1 слой, 100 шт", "cat": "Нон-Фуд", "before": 1, "after": 0, "price": 0.06456043956043955}, {"name": "Салфетки влажные освежающие, 8 шт", "cat": "Нон-Фуд", "before": 1, "after": 0, "price": 0.06274509803921569}, {"name": "Сердце цыплят-бройлеров", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.004750593824228044}, {"name": "Сок апельсиновый прямого отжима, 330 мл", "cat": "Напитки", "before": 1, "after": 0, "price": 0.020620748299319702}, {"name": "Соус \"Медово-горчичный\"", "cat": "Бакалея", "before": 1, "after": 0, "price": 0.01265822784810133}, {"name": "Соус из красного перца с сыром \"Рикотта\"", "cat": "Бакалея", "before": 1, "after": 0, "price": 0.008403361344537785}, {"name": "Сочник с творогом, 2 шт", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.03320041608876556}, {"name": "Стрипсы из филе цыпленка-бройлера на зерновом откорме", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.006299603174603208}, {"name": "Сырники с клубничной начинкой, зам., 600 г", "cat": "Замороженные п/ф", "before": 1, "after": 0, "price": 0.01978805627119895}, {"name": "Сырники творожные, зам., 600 г", "cat": "Замороженные п/ф", "before": 1, "after": 0, "price": 0.02750231111858148}, {"name": "Сэндвич ролл с тигровыми креветками", "cat": "Кулинария", "before": 1, "after": 0, "price": 0.036375661375661394}, {"name": "Творог для сырников 9% 350 г", "cat": "Молочная Продукция", "before": 1, "after": 0, "price": 0.014976359630665681}, {"name": "Торт \"Маракуйя\", 1 кг", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.015869954710595824}, {"name": "Торт \"Муравейное счастье\"", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.006117753214527455}, {"name": "Торт \"Половинки Медовик-Наполеон\"", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.01562176931029391}, {"name": "Торт шоколадный с карамелью и арахисом", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.01140774203498307}, {"name": "Треска атлантическая филе спинка зам., 600 г", "cat": "Рыба. Морепродукты", "before": 1, "after": 0, "price": 0.02456367162249506}, {"name": "Треска филе порционное зам., 400 г", "cat": "Рыба. Морепродукты", "before": 1, "after": 0, "price": 0.03361344537815136}, {"name": "Трубочка вафельная с кремом \"Белая сгущёнка\"", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.05586380832282478}, {"name": "Фарш из говядины и индейки, 360 г", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.02677496128921264}, {"name": "Фарш из кролика и индейки", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.0030211756115370303}, {"name": "Филе бедра индейки", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.005512679162072764}, {"name": "Филе индейки малое, 500 г", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.004098429495254963}, {"name": "Фрикадельки мини из телятины", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.00404459275981095}, {"name": "Хашбраун, зам.", "cat": "Замороженные п/ф", "before": 1, "after": 0, "price": 0.0066120218579234225}, {"name": "Чизкейк Ассорти мини (6 вкусов) зам. 400 г", "cat": "Торты, десерты замороженные", "before": 1, "after": 0, "price": 0.006482321704644689}, {"name": "Чизкейк классический \"Сан-Себастьян\", 100 г", "cat": "Торты, пирожные, десерты", "before": 1, "after": 0, "price": 0.01851851851851849}, {"name": "Чипсы картофельные соломкой со вкусом \"Острая паприка\"", "cat": "Бакалея", "before": 1, "after": 0, "price": 0.02011494252873569}, {"name": "Шаурма классическая", "cat": "Кулинария", "before": 1, "after": 0, "price": 0.0317540322580645}, {"name": "Шоколад белый \"Гречишный\", 25 г", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 0, "price": 0.0260869565217392}, {"name": "Шоколад белый \"Клубника\"", "cat": "Сладости, кондитерские изделия", "before": 1, "after": 0, "price": 0.03508771929824572}, {"name": "Щи из свежей капусты с говядиной", "cat": "Кулинария", "before": 1, "after": 0, "price": 0.024499999999999966}, {"name": "Яйцо куриное С1", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 1, "after": 0, "price": 0.01739130434782599}, {"name": "Яйцо куриное Зернового откорма Экстра С1", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 4, "after": 2, "price": 0.01129979570990813}, {"name": "Торт \"Шоколадный\"", "cat": "Торты, пирожные, десерты", "before": 2, "after": 0, "price": 0.01543209876543217}, {"name": "Фарш из цыпленка-бройлера \"Премиум\"", "cat": "Мясо. Птица. П/ф охл. Яйца", "before": 2, "after": 0, "price": 0.006309148264984188}, {"name": "Торт \"Мальдивские каникулы\" с крем-чиз", "cat": "Торты, пирожные, десерты", "before": 4, "after": 1, "price": 0.01128668171557567}, {"name": "Печень трески \"По-мурмански\", 110 г", "cat": "Рыба. Морепродукты", "before": 9, "after": 2, "price": 0.1176470588235294}], "cats_oth": [{"name": "Овощи. Фрукты. Грибы. Зелень", "before": 87, "after": 130}, {"name": "Кулинария", "before": 79, "after": 72}, {"name": "Рыба. Морепродукты", "before": 40, "after": 70}, {"name": "Мировые бренды", "before": 43, "after": 51}, {"name": "Хлеб", "before": 21, "after": 33}, {"name": "Молочная Продукция", "before": 26, "after": 32}, {"name": "Нон-Фуд", "before": 30, "after": 14}, {"name": "Сладости, кондитерские изделия", "before": 18, "after": 26}, {"name": "Сухофрукты. Сушеные грибы, ягоды. Орехи", "before": 7, "after": 21}, {"name": "Торты, пирожные, десерты", "before": 14, "after": 21}, {"name": "Мясные деликатесы. Колбасы", "before": 18, "after": 20}, {"name": "Мясо. Птица. П/ф охл. Яйца", "before": 15, "after": 18}, {"name": "РНД", "before": 18, "after": 15}, {"name": "Напитки", "before": 5, "after": 13}, {"name": "Кафе", "before": 6, "after": 12}, {"name": "Отдел без упаковки", "before": 7, "after": 9}, {"name": "Сыры", "before": 6, "after": 9}, {"name": "ДаркКитчен", "before": 8, "after": 6}, {"name": "Замороженные п/ф", "before": 8, "after": 7}, {"name": "Пекарня", "before": 2, "after": 6}, {"name": "Алкоголь", "before": 3, "after": 4}, {"name": "Бакалея", "before": 2, "after": 4}, {"name": "Консервация", "before": 4, "after": 4}, {"name": "Детское питание", "before": 2, "after": 2}, {"name": "Мороженое", "before": 2, "after": 0}, {"name": "Кулинария ШефВилл", "before": 1, "after": 0}, {"name": "Региональная полка", "before": 1, "after": 0}, {"name": "Региональная полка Поволжье", "before": 0, "after": 1}, {"name": "Региональная полка СПб", "before": 0, "after": 1}, {"name": "Рыбная витрина", "before": 0, "after": 1}, {"name": "Торты, десерты замороженные", "before": 1, "after": 0}]}}</script>
+
+<!--
+  ФАКТ за октябрь 2026. null или отсутствие поля = данных пока нет.
+  totals.online / totals.offline и cats["Категория"].online / .offline / .total (итого двух каналов):
+    price_pct  изменение средней цены (доля: 0.01 = 1%)
+    rev_rub    Δ выручки, ₽        rev_pct  Δ выручки, доля
+    gm_rub     Δ ГМ, ₽             gm_pct   Δ ГМ, доля
+    units_pct  Δ штук, доля        units    Δ штук, шт
+-->
+<script type="application/json" id="fact">
+{
+  "totals": {},
+  "cats": {}
+}
+</script>
+
+<script>
+(function(){
+'use strict';
+var FC = JSON.parse(document.getElementById('forecast').textContent);
+var POST = JSON.parse(document.getElementById('post').textContent);
+var REAL = JSON.parse(document.getElementById('fact').textContent);
+var FACT = REAL, DEMO = false;
+var A = window.ASSETS;
+var C = {fc:'#2DBE64', fact:'#D7144B', green:'#2DBE64', ink:'#1D2821', ink2:'#44524A', muted:'#78867D', line:'#E2E9E4', grid:'#EDF1EE', axis:'#B9C4BD', berry:'#D7144B'};
+var CH = [{k:'online', name:'Онлайн', icon:'&#x1F4F1;', date:'17.10'}, {k:'offline', name:'Офлайн', icon:'&#x1F3EA;', date:'17–21.10'}];
+var FOOT = 'Повышение цен · прогноз и факт · октябрь 2026';
+
+// ─── форматирование ────────────────────────────────────────────────────────
+function isNum(v){ return typeof v==='number' && isFinite(v); }
+function num(v,dec){ return Number(v).toLocaleString('ru-RU',{minimumFractionDigits:dec||0,maximumFractionDigits:dec||0}); }
+function sgn(v){ return v>0?'+':v<0?'−':''; }
+function rub(v){ if(!isNum(v)) return '—'; var a=Math.abs(v);
+  if(a>=1e9) return sgn(v)+num(a/1e9,2)+' млрд ₽'; if(a>=1e6) return sgn(v)+num(a/1e6,1)+' млн ₽';
+  if(a>=1e3) return sgn(v)+num(a/1e3,0)+' тыс ₽'; return sgn(v)+num(a,0)+' ₽'; }
+function pct(v,dec){ if(!isNum(v)) return '—'; return sgn(v)+num(Math.abs(v*100),dec==null?2:dec)+'%'; }
+function pp(v,dec){ if(!isNum(v)) return '—'; return sgn(v)+num(Math.abs(v),dec==null?2:dec)+' п.п.'; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+var CAT={}; FC.cats.forEach(function(c){ CAT[c.name]=c; });
+function units(v){ if(!isNum(v)) return '—'; var a=Math.abs(v); return sgn(v)+(a>=1e6?num(a/1e6,2)+' млн шт':a>=1e3?num(a/1e3,0)+' тыс шт':num(a,0)+' шт'); }
+function fTot(ch){ return (FACT.totals||{})[ch]||{}; }
+function fCat(name,ch){ return ((FACT.cats||{})[name]||{})[ch]||{}; }
+function hasFact(){ return Object.keys(FACT.totals||{}).length>0 || Object.keys(FACT.cats||{}).length>0; }
+
+// отклонение факт − прогноз; для штук и цены — в п.п.
+function dev(fc, fa, kind){
+  if(!isNum(fc)||!isNum(fa)) return {cls:'wait', t:'ожидается'};
+  var d=fa-fc, t;
+  if(kind==='rub') t=rub(d); else if(kind==='pp') t=pp(d,3); else t=sgn(d)+num(Math.abs(d*100),2)+' п.п.';
+  if(kind==='rub' && fc) t+=' · '+num(fa/fc*100,0)+'%';
+  return {cls:d>0?'up':d<0?'down':'', t:(d>0?'▲ ':d<0?'▼ ':'')+t};
+}
+
+// ─── SVG-утилиты ───────────────────────────────────────────────────────────
+var NS='http://www.w3.org/2000/svg';
+function el(tag, attrs, parent){ var e=document.createElementNS(NS,tag); for(var k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+function txt(parent, x, y, s, attrs){ var t=el('text', Object.assign({x:x,y:y,'font-size':12,fill:C.ink2}, attrs||{}), parent); t.textContent=s; return t; }
+function niceStep(span, target){ var raw=span/(target||5), p=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/p;
+  return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p; }
+function hbar(x0, x1, y, h, r){ r=Math.min(r, Math.abs(x1-x0), h/2);
+  if(x1>=x0) return 'M'+x0+','+y+'H'+(x1-r)+'Q'+x1+','+y+' '+x1+','+(y+r)+'V'+(y+h-r)+'Q'+x1+','+(y+h)+' '+(x1-r)+','+(y+h)+'H'+x0+'Z';
+  return 'M'+x0+','+y+'H'+(x1+r)+'Q'+x1+','+y+' '+x1+','+(y+r)+'V'+(y+h-r)+'Q'+x1+','+(y+h)+' '+(x1+r)+','+(y+h)+'H'+x0+'Z'; }
+function tipOn(box, tip, ev, html){
+  tip.innerHTML=html; tip.style.display='block';
+  var bx=box.getBoundingClientRect(), sc=bx.width/box.offsetWidth||1;
+  var left=(ev.clientX-bx.left)/sc+14, top=(ev.clientY-bx.top)/sc-10;
+  if(left+tip.offsetWidth>box.offsetWidth) left-=tip.offsetWidth+28;
+  if(top+tip.offsetHeight>box.offsetHeight) top=box.offsetHeight-tip.offsetHeight;
+  tip.style.left=left+'px'; tip.style.top=top+'px';
+}
+function sw(c){ return '<span class="sw" style="background:'+c+'"></span>'; }
+
+/* Категории строками, одна или несколько панелей «прогноз / факт».
+   rows: [{name, meta}] — meta мелко под названием;
+   panels: [{title?, get(name)->{fc,fa,sub}|null, fmt, tfmt, kind, k}] — sub мелко под значением;
+   domain: общий масштаб {lo,hi,st} (иначе свой у каждой панели) */
+function catDomain(rows, panels){
+  var v=[0]; panels.forEach(function(p){ rows.forEach(function(r){ var d=p.get(r.name); if(!d) return;
+    v.push(d.fc*p.k); if(isNum(d.fa)) v.push(d.fa*p.k); }); });
+  var lo=Math.min.apply(null,v), hi=Math.max.apply(null,v), st=niceStep(Math.max(hi-lo,1e-9),4);
+  return {lo:Math.floor(lo/st)*st, hi:Math.ceil(hi/st)*st, st:st};
+}
+function multiChart(box,o){
+ var rows=o.rows,n=rows.length,P=o.panels.length,W=o.width,LW=226,top=41,bot=29,H=o.height,rh=(H-top-bot)/n,PW=(W-LW)/P;
+ var svg=el('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H},box),tip=document.createElement('div');tip.className='tip';
+ var measure=document.createElement('canvas').getContext('2d');measure.font='500 13px "Segoe UI",Arial';
+ rows.forEach(function(r,i){var yc=top+(i+.5)*rh,words=r.name.split(' '),lines=[],line='';
+  words.forEach(function(w){var s=(line?line+' ':'')+w;if(line&&measure.measureText(s).width>207){lines.push(line);line=w}else line=s});if(line)lines.push(line);
+  var t=txt(svg,2,yc+4,'',{'font-size':13,'font-weight':500,fill:'#242E27'});lines.forEach(function(s,j){var sp=el('tspan',{x:2,y:yc+4+(j-(lines.length-1)/2)*12},t);sp.textContent=s});el('title',{},t).textContent=r.name+(r.meta?' · '+r.meta:'');
+ });
+ o.panels.forEach(function(p,pi){var px=LW+pi*PW,bx0=px+18,bx1=px+PW-65,base=o.domain||catDomain(rows,[p]),span=base.hi-base.lo;
+  var lo=base.lo<0?base.lo-span*.09:0,hi=base.hi>0?base.hi+span*.12:0;
+  var X=function(v){return bx0+(v-lo)/(hi-lo)*(bx1-bx0)};
+  txt(svg,px+18,20,p.title||'',{'font-size':P===3?15:20,'font-weight':650,fill:'#202822'});
+  el('line',{x1:px+18,y1:29,x2:px+PW-18,y2:29,stroke:'#2DBE64','stroke-width':2},svg);
+  for(var v=base.lo;v<=base.hi+base.st*.001;v+=base.st){var zero=Math.abs(v)<base.st*.001;
+   el('line',{x1:X(v),x2:X(v),y1:top,y2:H-bot,stroke:zero?'#8FA99A':'#E8EEE9','stroke-width':zero?1.2:.8,'stroke-dasharray':zero?'':'2 5'},svg);
+   txt(svg,X(v),H-7,zero?'0':num(v,p.axisDec||0)+(p.tick||''),{'text-anchor':'middle','font-size':11,fill:'#53695B'});
+  }
+  rows.forEach(function(r,i){var d=p.get(r.name),yc=top+(i+.5)*rh;if(!d)return;var has=isNum(d.fa),f=d.fc*p.k,a=has?d.fa*p.k:null;
+   function bar(v,y,height,color,value){var xx=X(v);el('path',{d:hbar(X(0),xx,y-height/2,height,3),fill:color},svg);txt(svg,xx+(v<0?-6:6),y+4,value,{'text-anchor':v<0?'end':'start','font-size':has?12.5:14,'font-weight':650,fill:color===C.fact?'#AA123C':'#242E27'});}
+   if(has){bar(f,yc-6,7,C.fc,p.fmt(d.fc));bar(a,yc+6,7,C.fact,p.fmt(d.fa))}else bar(f,yc,12,C.fc,p.fmt(d.fc));
+   var hit=el('rect',{x:px,y:yc-rh/2,width:PW,height:rh,fill:'transparent'},svg);hit.addEventListener('mousemove',function(ev){var dv=dev(d.fc,d.fa,p.kind),tf=p.tfmt||p.fmt;
+    tipOn(box,tip,ev,'<b>'+esc(r.name)+' · '+esc(p.title||'')+'</b><br>'+sw(C.fc)+'Прогноз: <b>'+tf(d.fc)+'</b><br>'+sw(C.fact)+'Факт: <b>'+(has?tf(d.fa):'ожидается')+'</b>'+(has?'<br>Отклонение: <b>'+dv.t+'</b>':'')+(d.tip?'<br>'+esc(d.tip):r.meta?'<br>Товаров с новой ценой · изменение цены: '+esc(r.meta):''));});hit.addEventListener('mouseleave',function(){tip.style.display='none'});
+  });
+ });box.style.position='relative';box.appendChild(tip);
+}
+
+/* Вертикальные столбики (переоценка по дням) */
+function colChart(box, o){
+  var W=o.width, H=o.height, m={l:10,r:10,t:26,b:30}, iw=W-m.l-m.r, ih=H-m.t-m.b, n=o.items.length;
+  var hi=Math.max.apply(null,o.items.map(function(d){return d.v;}))*1.08, bw=iw/n;
+  var Y=function(v){ return m.t+ih-v/hi*ih; };
+  var svg=el('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H},null);
+  el('line',{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),stroke:C.axis},svg);
+  o.items.forEach(function(d,i){
+    var w=Math.min(46,bw*.55), x=m.l+i*bw+(bw-w)/2;
+    if(d.v) el('rect',{x:x,y:Y(d.v),width:w,height:Y(0)-Y(d.v),rx:4,fill:d.c||C.green},svg);
+    txt(svg,x+w/2,Y(d.v)-7,d.v?num(d.v,0):'—',{'text-anchor':'middle',fill:C.ink,'font-size':12.5,'font-weight':600});
+    txt(svg,x+w/2,H-9,d.k,{'text-anchor':'middle',fill:C.muted,'font-size':12});
+  });
+  box.style.position='relative'; box.appendChild(svg);
+}
+
+// ─── каркас слайда ─────────────────────────────────────────────────────────
+var SLIDES=[], curGroup='';
+var SHOW_CATS=false; // слайды прогноза по категориям пока скрыты
+function slide(title, sub, build){ SLIDES.push({title:title, sub:sub, build:build, group:curGroup}); }
+function frame(s, idx){
+  var sec=document.createElement('section'); sec.className='slide'+(s.group==='Категории'||s.title==='Прогноз и факт: онлайн и офлайн'?' polished':'');
+  if(s.raw){ s.build(sec); return sec; }
+  sec.innerHTML='<div class="hdr"><h1>'+esc(s.title)+'</h1>'+(s.sub?'<div class="sub">'+esc(s.sub)+'</div>':'')+
+    '<img src="'+A.logo+'" alt="ВкусВилл"></div>'+(DEMO?'<div class="demo-flag">Тестовые данные факта</div>':'')+'<div class="body"></div>'+
+    '<div class="ftr"><span>'+esc(FOOT)+'</span><span>'+(idx+1)+'</span></div>';
+  var b=sec.querySelector('.body');
+  try{ s.build(b); }catch(e){ b.innerHTML='<div class="empty">Ошибка построения слайда: '+esc(e.message)+'</div>'; console.error(e); }
+  return sec;
+}
+
+// ═══ СЛАЙДЫ ════════════════════════════════════════════════════════════════
+function plainTakeaway(icon,lines){
+ return '<div class="callout post-call plain-takeaway"><div class="ic">'+icon+'</div><div class="call-lines">'+lines.map(function(line){return '<div>'+line+'</div>'}).join('')+'</div></div>';
+}
+
+function define(){
+// 1. Титульный
+curGroup='Введение';
+SLIDES.push({raw:true, title:'Титульный', group:curGroup, build:function(sec){
+  var st=DEMO?['demo','Тестовые данные факта']:hasFact()?['ok','Факт загружен']:['','Черновик · факт ожидается'];
+  sec.innerHTML='<div class="title-bg"></div><div class="title-txt"><div class="k">Ценообразование</div>'+
+    '<h1>Повышение цен:<br>прогноз и факт</h1><div class="m">октябрь 2026</div>'+
+    '<div class="d">Онлайн и офлайн · эффект новых цен на выручку и грязную маржу</div></div>'+
+    '<img class="title-logo" src="'+A.logo+'" alt="ВкусВилл">'+
+    '<div class="title-status '+st[0]+'">'+st[1]+'</div>';
+}});
+
+// 2. Что сделали
+slide('Что сделали','Октябрь 2026 · повышение цен на товары из списка повышений',function(b){
+  var t=FC.totals, PB=FC.price_bins;
+  b.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;height:100%">'+
+    CH.map(function(c){
+      var x=t[c.k], p=PB[c.k];
+      return '<div class="ch-panel"><div class="ch-head"><h2><span class="ch-badge">'+c.icon+'</span>'+c.name+'</h2>'+
+        '<div class="ch-meta">переоценка<br><b>'+c.date+'</b></div></div>'+
+        '<div class="kpi-grid" style="grid-template-columns:1fr 1fr">'+
+          '<div class="kpi-card"><span>Позиций с повышением цены</span><strong>'+num(p.up,0)+'</strong></div>'+
+          '<div class="kpi-card"><span>Изменение средневзвешенной цены</span><strong>'+pct(x.price_pct,2)+'</strong><em>'+num(x.cur_price,1)+' ₽ → '+num(x.new_price,1)+' ₽</em></div>'+
+        '</div>'+
+        '<div id="d-'+c.k+'" class="chart" style="margin-top:14px;flex:1"></div></div>';
+    }).join('')+'</div>';
+  CH.forEach(function(c){
+    var box=b.querySelector('#d-'+c.k), on=c.k==='online';
+    box.innerHTML='<div class="ttl">'+(on?'Смена цен по дням':'Переоценка в магазинах по дням')+'</div>';
+    colChart(box,{width:540,height:250,items:PB[c.k].by_date.map(function(d){ return {k:d[0],v:d[1]}; })});
+    box.insertAdjacentHTML('beforeend','<div style="font-size:12.5px;color:var(--muted);margin-top:4px">'+
+      (on?'Все цены онлайн обновлены одним днём':'Число позиций с повышением, по дате смены ценников')+'</div>');
+  });
+});
+
+// 3. На сколько поднимали цены
+slide('На сколько поднимали цены','Октябрь 2026 · число позиций с повышением цены по размеру повышения',function(b){
+  var PB=FC.price_bins;
+  b.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;height:100%">'+CH.map(function(c){
+    var x=PB[c.k], down=x.bins[0][1];
+    return '<div class="ch-panel"><div class="ch-head"><h2><span class="ch-badge">'+c.icon+'</span>'+c.name+'</h2>'+
+      '<div class="ch-meta">позиций с повышением <b>'+num(x.n-down,0)+'</b><br>медиана повышения <b>'+pct(x.median,1)+'</b></div></div>'+
+      '<div id="pb-'+c.k+'" class="chart" style="flex:1"></div>'+
+      '</div>';
+  }).join('')+'</div>';
+  CH.forEach(function(c){
+    colChart(b.querySelector('#pb-'+c.k),{width:540,height:420,items:PB[c.k].bins.slice(1).map(function(d){ return {k:d[0],v:d[1]}; })});
+  });
+});
+
+// 4. Как рассчитывали новые цены
+slide('Как рассчитывали, как повышать цены','Цель по марже сети → список товаров → цены конкурентов → эластичность → эффект',function(b){
+  var M=FC.method, PB=FC.price_bins;
+  var st=[
+    ['Цель','Поднять долю грязной маржи сети на <b>+0,345 п.п.</b> к базовому прогнозу на сентябрь–декабрь. Эффект от улучшения закупочных условий — отдельно, ещё около +0,07 п.п.'],
+    ['Список товаров','Кандидаты на повышение по '+M.groups+' группам. KVI и социально значимые товары почти не трогали.'],
+    ['Конкуренты','Аналоги в '+M.nets+' сетях: Перекрёсток, Яндекс Лавка, Впрок, Пятёрочка, Самокат и другие, цены на 09.10. Новую цену сверяли с медианой и максимумом цен конкурентов.'],
+    ['Эластичность','Насколько упадут продажи в штуках: коэффициент товара при высокой или средней надёжности, иначе — коэффициент группы. Для штук берём 75% коэффициента.'],
+    ['Эффект','Новая цена × новые штуки против текущих — Δ выручки и грязной маржи по каждому товару и каналу. Себестоимость не меняется. Итог по сети сверяем с целью.']];
+  function kc(v,t,s){ return '<div class="kpi-card"><span>'+t+'</span><strong>'+v+'</strong><em>'+s+'</em></div>'; }
+  b.innerHTML='<div style="display:flex;flex-direction:column;height:100%"><div class="steps" style="flex:1">'+st.map(function(s,i){ return '<div class="step"><div class="n">'+(i+1)+'</div><h3>'+s[0]+'</h3><p>'+s[1]+'</p></div>'; }).join('')+'</div>'+
+    '<div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-top:16px">'+
+      kc(num(M.products,0),'Товаров в списке повышений',num(PB.online.up,0)+' позиций онлайн · '+num(PB.offline.up,0)+' офлайн')+
+      kc(num(M.with_comp,0),'Товаров сверили с конкурентами',num(M.pairs,0)+' пар аналогов в '+M.nets+' сетях')+
+      kc(pct(M.median,1).replace('+',''),'Медианное повышение цены',num(M.le3*100,0)+'% позиций — не больше 3%')+
+      kc(M.kvi_up+' из '+M.kvi,'KVI и социально значимых','товаров с повышением цены')+
+    '</div>'+
+    plainTakeaway('!', ['<b>Октябрь — неполный месяц.</b>', 'Новые цены действуют с 17.10 онлайн и с 17–21.10 в магазинах — примерно 11–15 дней из 31.'])+'</div>';
+});
+
+// 5–7. Итоги октября: доля ГМ по себестоимости РЦ и жалобы ─────────────────────
+curGroup='Итоги октября';
+var PC={before:'#9DAAA1', after:C.fact, exp:C.fc};
+function avg(a){ return a.reduce(function(s,v){return s+v;},0)/a.length; }
+function chg(a,b){ return b/a-1; }
+
+slide('Доля ГМ по себестоимости РЦ: до и после повышения','Сеть, по неделям · до — среднее за 21.09–11.10, после — неделя 26.10–01.11',function(b){
+  var W=POST.bdr, pre=W.filter(function(w){return w.week<=909;}), last=W[W.length-1];
+  var gm0=avg(pre.map(function(w){return w.gm_share;})), rc0=avg(pre.map(function(w){return w.rc_share;}));
+  var ad0=avg(pre.map(function(w){return w.ad_share;})), rev0=avg(pre.map(function(w){return w.rev;})), gmr0=avg(pre.map(function(w){return w.gm;}));
+  var dRC=(last.rc_share-rc0)*100, EXP=0.345;
+  b.innerHTML='<div class="post-grid"><div class="ch-panel"><div class="ttl">Доля ГМ по себестоимости РЦ, % от выручки</div>'+
+      '<div class="legend" style="margin:2px 0 4px"><span><i style="background:'+PC.after+'"></i>Факт</span><span><i style="background:'+PC.before+'"></i>Среднее до повышения</span></div>'+
+      '<div class="chart" id="gmc"></div></div>'+
+    '<div class="post-side"><div class="hero"><div class="hl">Рост доли ГМ по себестоимости РЦ</div><div class="hv">'+pp(dRC,2)+'</div>'+
+      '<div class="hs">'+num(rc0*100,2)+'% → '+num(last.rc_share*100,2)+'%</div>'+
+      '<div class="hx">ожидали <b>+0,345 п.п.</b> — факт в <b>'+num(dRC/EXP,1)+' раза</b> выше</div></div>'+
+      '<div class="kgrid">'+
+        kc('Выручка в неделю', pct(chg(rev0,last.rev),1), rub(rev0).replace('+','')+' → '+rub(last.rev).replace('+',''))+
+        kc('Грязная маржа в неделю', pct(chg(gmr0,last.gm),1), rub(gmr0).replace('+','')+' → '+rub(last.gm).replace('+',''))+
+        kc('Доля грязной маржи', pp((last.gm_share-gm0)*100,2), num(gm0*100,2)+'% → '+num(last.gm_share*100,2)+'%')+
+        kc('Доля маржи после скидок', pp((last.ad_share-ad0)*100,2), num(ad0*100,2)+'% → '+num(last.ad_share*100,2)+'%')+
+      '</div></div></div>'+
+    plainTakeaway('↑', ['<b>Повышение цен подтянуло все основные метрики.</b>', 'Финальные значения роста будут отражены только в ноябре, при новой доле себестоимости.'])+
+    '<div class="post-note">Неделя 12.10–18.10 — переходная: новые цены действовали с 17.10.</div>';
+  function kc(t,v,s){ return '<div class="kc"><div class="kt">'+t+'</div><div class="kv">'+v+'</div><div class="ks">'+s+'</div></div>'; }
+  // линия по неделям
+  var box=b.querySelector('#gmc'), Wd=690, H=318, m={l:46,r:20,t:26,b:40};
+  var vals=W.map(function(w){return w.rc_share*100;}).concat([rc0*100+EXP]);
+  var lo=Math.floor((Math.min.apply(null,vals)-0.15)*10)/10, hi=Math.ceil((Math.max.apply(null,vals)+0.15)*10)/10;
+  var n=W.length, X=function(i){ return m.l+20+i*(Wd-m.l-m.r-40)/(n-1); }, Y=function(v){ return m.t+(hi-v)/(hi-lo)*(H-m.t-m.b); };
+  var svg=el('svg',{width:Wd,height:H,viewBox:'0 0 '+Wd+' '+H},null);
+  var st=niceStep(hi-lo,5);
+  for(var v=Math.ceil(lo/st)*st; v<=hi+1e-9; v+=st){ el('line',{x1:m.l,x2:Wd-m.r,y1:Y(v),y2:Y(v),stroke:C.grid},svg);
+    txt(svg,m.l-8,Y(v)+4,num(v,1)+'%',{'text-anchor':'end',fill:C.muted,'font-size':11}); }
+  var iNew=W.findIndex(function(w){return w.week===910;});
+  el('rect',{x:X(iNew)-14,y:m.t-6,width:X(n-1)-X(iNew)+28,height:H-m.t-m.b+6,rx:8,fill:'#FBEFF2'},svg);
+  txt(svg,(X(iNew)+X(n-1))/2,m.t+8,'новые цены с 17.10',{'text-anchor':'middle',fill:C.berry,'font-size':11.5,'font-weight':600});
+  el('line',{x1:X(0)-14,x2:X(2)+14,y1:Y(rc0*100),y2:Y(rc0*100),stroke:PC.before,'stroke-width':3,'stroke-linecap':'round'},svg);
+  txt(svg,X(0)-14,Y(rc0*100)+18,'до: '+num(rc0*100,2)+'%',{'text-anchor':'start',fill:C.ink2,'font-size':11.5,'font-weight':600});
+  el('line',{x1:X(iNew)-14,x2:X(n-1)+14,y1:Y(rc0*100+EXP),y2:Y(rc0*100+EXP),stroke:PC.exp,'stroke-width':2,'stroke-dasharray':'6 4'},svg);
+  txt(svg,X(n-1)+14,Y(rc0*100+EXP)+16,'ожидание '+num(rc0*100+EXP,2)+'%',{'text-anchor':'end',fill:'#1E8A4A','font-size':11.5,'font-weight':600});
+  var d=''; W.forEach(function(w,i){ d+=(i?'L':'M')+X(i)+','+Y(w.rc_share*100); });
+  el('path',{d:d,fill:'none',stroke:PC.after,'stroke-width':2.5,'stroke-linejoin':'round'},svg);
+  W.forEach(function(w,i){ el('circle',{cx:X(i),cy:Y(w.rc_share*100),r:4.5,fill:PC.after,stroke:'#fff','stroke-width':2},svg);
+    txt(svg,X(i),Y(w.rc_share*100)-11,num(w.rc_share*100,2)+'%',{'text-anchor':'middle',fill:C.ink,'font-size':12,'font-weight':700,stroke:'#fff','stroke-width':3,'paint-order':'stroke'});
+    txt(svg,X(i),H-20,w.label.split('–')[0]+'–',{'text-anchor':'middle',fill:C.muted,'font-size':10.5});
+    txt(svg,X(i),H-7,w.label.split('–')[1],{'text-anchor':'middle',fill:C.muted,'font-size':10.5}); });
+  box.appendChild(svg);
+});
+
+slide('Жалобы на высокую цену','Жалобы покупателей на высокую цену, товары ВкусВилл · по неделям · до — 21.09–11.10, после — 12.10–01.11',function(b){
+  var C2=POST.compl, S=C2.stat, wk=C2.weeks, sum=function(ws,k){ return wk.filter(function(w){return ws.indexOf(w.week)>=0;}).reduce(function(s,w){return s+w[k];},0); };
+  var a0=sum(C2.before,'all'), a1=sum(C2.after,'all'), u0=sum(C2.before,'up'), u1=sum(C2.after,'up');
+  var ix=C2.index, ia=function(ws,k){ return avg(ix.filter(function(r){return ws.indexOf(r.week)>=0;}).map(function(r){return r[k];})); };
+  var i0=ia(C2.before,'cur'), i1=ia(C2.after,'cur'), p1=ia(C2.after,'prev');
+  b.innerHTML='<div class="post-grid"><div class="ch-panel"><div class="ttl">Жалоб в неделю, шт.</div>'+
+      '<div class="legend" style="margin:2px 0 4px"><span><i style="background:'+PC.after+'"></i>На товары из планового повышения</span><span><i style="background:#C9D3CC"></i>На остальные товары</span></div>'+
+      '<div class="chart" id="cpc"></div></div>'+
+    '<div class="post-side"><div class="kgrid two">'+
+      kc2('Все жалобы на высокую цену', num(a0,0)+' → '+num(a1,0), pct(chg(a0,a1),0), '<span class="caption-line">На остальные товары:</span><span class="caption-line"><strong>'+num(a0-u0,0)+' → '+num(a1-u1,0)+'</strong> ('+pct(chg(a0-u0,a1-u1),0)+')</span>')+
+      kc2('Доля жалоб на товары из планового повышения', num(u0/a0*100,0)+'% → '+num(u1/a1*100,0)+'%', pp((u1/a1-u0/a0)*100,1), '<span class="caption-line">До — <strong>'+num(u0,0)+' из '+num(a0,0)+'</strong> жалоб.</span><span class="caption-line">После — <strong>'+num(u1,0)+' из '+num(a1,0)+'</strong>.</span>')+
+      kc2('Товаров из планового повышения с жалобами', num(S.up_nb,0)+' → '+num(S.up_na,0), '', '<span class="caption-line">Из <strong>'+num(C2.up_products,0)+'</strong> товаров.</span><span class="caption-line">Рост жалоб — у <strong>'+S.up_grow+'</strong>.</span><span class="caption-line">У <strong>'+S.up_grow1+'</strong> из них — на одну жалобу.</span>')+
+      kc2('Жалоб на 10 тыс. продаж', num(i0,3)+' → '+num(i1,3), pct(chg(i0,i1),0), '<span class="caption-line">Год назад в эти недели:</span><span class="caption-line"><strong>'+num(p1,3)+'</strong> — в <strong>'+num(p1/i1,1)+' раза</strong> больше.</span>')+
+    '</div></div></div>'+
+    plainTakeaway('i', ['<b>Жалобы росли не только на товары из планового повышения.</b>', 'В пересчёте на 10 тыс. продаж рост ниже — '+pct(chg(i0,i1),0)+', а сам уровень в '+num(p1/i1,1)+' раза меньше, чем год назад.', 'После пика в неделю повышения индекс уже снижается: '+[910,911,912].map(function(w){return num(ix.filter(function(r){return r.week===w;})[0].cur,3)}).join(' → ')+'.']);
+  function kc2(t,v,d,s){ var parts=v.split(' → '); var value=parts.length===2?'<span class="before">'+parts[0]+'</span><span class="arrow"> → </span><span class="after">'+parts[1]+'</span>':v; return '<div class="kc"><div class="kt">'+t+'</div><div class="kv">'+value+'</div>'+(d?'<div class="kd down">'+d+'</div>':'')+'<div class="ks">'+s+'</div></div>'; }
+  var box=b.querySelector('#cpc'), Wd=690, H=330, m={l:34,r:8,t:24,b:28}, n=wk.length, bw=(Wd-m.l-m.r)/n;
+  var hi=Math.max.apply(null,wk.map(function(w){return w.all;}))*1.1, Y=function(v){ return m.t+(1-v/hi)*(H-m.t-m.b); };
+  var svg=el('svg',{width:Wd,height:H,viewBox:'0 0 '+Wd+' '+H},null);
+  var st=niceStep(hi,4);
+  for(var v=0; v<=hi; v+=st){ el('line',{x1:m.l,x2:Wd-m.r,y1:Y(v),y2:Y(v),stroke:v?C.grid:C.axis},svg); txt(svg,m.l-6,Y(v)+4,num(v,0),{'text-anchor':'end',fill:C.muted,'font-size':10.5}); }
+  var i0w=wk.findIndex(function(w){return w.week===C2.after[0];});
+  el('rect',{x:m.l+i0w*bw,y:m.t-8,width:bw*(n-i0w),height:H-m.t-m.b+8,rx:8,fill:'#FBEFF2'},svg);
+  txt(svg,m.l+(i0w+(n-i0w)/2)*bw,m.t+4,'после',{'text-anchor':'middle',fill:C.berry,'font-size':11.5,'font-weight':600});
+  var tip=document.createElement('div'); tip.className='tip';
+  wk.forEach(function(w,i){
+    var x=m.l+i*bw+bw*.17, bwi=bw*.66;
+    el('rect',{x:x,y:Y(w.all),width:bwi,height:Y(w.up)-Y(w.all),rx:3,fill:'#C9D3CC'},svg);
+    el('rect',{x:x,y:Y(w.up),width:bwi,height:Y(0)-Y(w.up),fill:PC.after},svg);
+    if(i>=n-8) txt(svg,x+bwi/2,Y(w.all)-5,num(w.all,0),{'text-anchor':'middle',fill:C.ink,'font-size':10.5,'font-weight':600});
+    if(i%2===(n-1)%2) txt(svg,x+bwi/2,H-10,w.label,{'text-anchor':'middle',fill:C.muted,'font-size':10});
+    var hit=el('rect',{x:m.l+i*bw,y:m.t,width:bw,height:H-m.t-m.b,fill:'transparent'},svg);
+    hit.addEventListener('mousemove',function(ev){ tipOn(box,tip,ev,'<b>Неделя с '+w.label+'</b><br>Всего жалоб: <b>'+w.all+'</b><br>'+sw(PC.after)+'На товары из планового повышения: <b>'+w.up+'</b>'); });
+    hit.addEventListener('mouseleave',function(){ tip.style.display='none'; });
+  });
+  box.style.position='relative'; box.appendChild(svg); box.appendChild(tip);
+});
+
+slide('Жалобы на высокую цену по категориям','Сумма жалоб за 3 недели до (21.09–11.10) и 3 недели после повышения (12.10–01.11)',function(b){
+  var C2=POST.compl, S=C2.stat;
+  b.innerHTML='<div class="chart-top"><div class="legend"><span><i style="background:'+PC.before+'"></i>До повышения</span><span><i style="background:'+PC.after+'"></i>После повышения</span></div>'+
+    '<div class="hint">Справа: до → после · изменение</div></div>'+
+    '<div class="two-ch cat call">'+
+      '<div class="ch-panel"><div class="ch-head sm"><h2>Товары из планового повышения</h2><div class="ch-meta">жалоб, шт.</div></div><div class="chart" id="cu"></div></div>'+
+      '<div class="ch-panel"><div class="ch-head sm"><h2>Остальные товары</h2><div class="ch-meta">жалоб, шт.</div></div><div class="chart" id="ca"></div></div>'+
+    '</div>'+
+    plainTakeaway('i', ['<b>Рост жалоб укладывается в общую тенденцию.</b>', 'Остальные товары: '+S.oth_b+' → '+S.oth_a+' (+'+(S.oth_a-S.oth_b)+'). Товары из планового повышения: '+S.up_b+' → '+S.up_a+' (+'+(S.up_a-S.up_b)+').', 'Жалобы растут независимо от планового повышения.']);
+  pairChart(b.querySelector('#ca'), C2.cats_oth.slice(0,15));
+  pairChart(b.querySelector('#cu'), C2.cats_up.slice(0,15));
+});
+slide('Товары из планового повышения: жалобы по категориям','Жалобы на высокую цену: 3 недели до (21.09–11.10) и 3 недели после повышения (12.10–01.11) · выберите категорию',function(b){
+  var C2=POST.compl, S=C2.stat, P=C2.prod_up, cats={};
+  P.forEach(function(r){ var c=cats[r.cat]||(cats[r.cat]={name:r.cat,n:0,before:0,after:0}); c.n++; c.before+=r.before; c.after+=r.after; });
+  var list=[{name:'Все категории',n:P.length,before:S.up_b,after:S.up_a,all:true}].concat(Object.keys(cats).map(function(k){return cats[k];})
+    .sort(function(x,y){ return (y.after-y.before)-(x.after-x.before)||y.after-x.after; }));
+  b.innerHTML='<div class="chart-top"><div class="legend"><span><i style="background:'+PC.before+'"></i>До повышения</span><span><i style="background:'+PC.after+'"></i>После повышения</span></div>'+
+    '<div class="hint">Товары, на которые были жалобы до или после · по приросту жалоб</div></div>'+
+    '<div class="pick">'+
+      '<div class="ch-panel pick-list">'+list.map(function(c,i){ var d=c.after-c.before;
+        return '<button class="pick-it'+(i?'':' on')+'" data-i="'+i+'"><span class="pn">'+esc(c.name)+'<small>'+num(c.n,0)+' '+plural(c.n,'товар','товара','товаров')+'</small></span>'+
+          '<span class="pv">'+c.before+' → '+c.after+'<em class="'+(d>0?'up':d<0?'dn':'')+'">'+(d>0?'+':'')+d+'</em></span></button>'; }).join('')+'</div>'+
+      '<div class="ch-panel pick-main"><div class="ch-head sm"><div><h2>Жалобы на высокую цену по товарам</h2><div class="product-category" id="pk-t"></div></div><div class="ch-meta" id="pk-m"></div></div><div class="product-chart-key"><span>Товар и повышение цены</span><span>Жалобы, шт.</span><span>До → после</span></div><div class="chart pick-scroll" id="pk-c"></div></div>'+
+    '</div>'+
+    plainTakeaway('i', ['Из '+num(C2.up_products,0)+' товаров планового повышения жалобы после повышения были у <b>'+S.up_na+'</b> (до — у '+S.up_nb+').', 'Жалоб стало больше у <b>'+S.up_grow+' товаров</b>.', 'У '+S.up_grow1+' из них — всего на одну жалобу за 3 недели.']);
+  function show(i){
+    var c=list[i], rows=P.filter(function(r){ return c.all||r.cat===c.name; });
+    b.querySelector('#pk-t').textContent=c.name;
+    b.querySelector('#pk-m').textContent=num(rows.length,0)+' '+plural(rows.length,'товар','товара','товаров')+' · жалоб '+c.before+' → '+c.after;
+    var box=b.querySelector('#pk-c'); box.innerHTML=''; box.scrollTop=0; prodChart(box, rows);
+    b.querySelectorAll('.pick-it').forEach(function(x){ x.classList.toggle('on', +x.dataset.i===i); });
+  }
+  b.querySelectorAll('.pick-it').forEach(function(x){ x.addEventListener('click',function(){ show(+x.dataset.i); }); });
+  show(0);
+});
+function plural(n,a,b2,c){ n=Math.abs(n)%100; var m=n%10; return n>10&&n<20?c:m===1?a:m>=2&&m<=4?b2:c; }
+function prodChart(box, rows){
+  var W=Math.max(700,(box.clientWidth||820)-17),LW=Math.floor(W*.57),VW=100,barLeft=LW+16,barRight=W-VW-12;
+  var hi=Math.max(1,Math.max.apply(null,rows.map(function(r){return Math.max(r.before,r.after)})));
+  var X=function(v){return barLeft+v/hi*(barRight-barLeft)};
+  var measure=document.createElement('canvas').getContext('2d');measure.font='500 13.5px "Segoe UI",Arial';
+  function linesOf(name){var lines=[],line='';name.split(' ').forEach(function(w){var candidate=(line?line+' ':'')+w;if(line&&measure.measureText(candidate).width>LW-10){lines.push(line);line=w}else line=candidate});if(line)lines.push(line);return lines}
+  var built=rows.map(function(r){var lines=linesOf(r.name);return {r:r,lines:lines,h:Math.max(56,lines.length*16+30)}});
+  var H=built.reduce(function(s,r){return s+r.h},8),svg=el('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H},box),y=4;
+  built.forEach(function(item){var r=item.r,yc=y+item.h/2,group=el('g',{'data-product':r.name,'data-category':r.cat,'data-price':r.price},svg);
+    var title=el('title',{},group);title.textContent=r.name+' · '+r.cat+' · цена '+pct(r.price,1)+' · жалобы '+r.before+' → '+r.after;
+    var name=txt(group,0,y+16,'',{'font-size':13.5,'font-weight':550,fill:'#263B2E'});
+    item.lines.forEach(function(line,j){el('tspan',{x:0,y:y+16+j*16},name).textContent=line});
+    var sy=y+item.lines.length*16+18;
+    var category=txt(group,0,sy,r.cat,{'font-size':11.5,fill:'#62776A'});
+    measure.font='400 11.5px "Segoe UI",Arial';var catW=measure.measureText(r.cat).width;measure.font='500 13.5px "Segoe UI",Arial';
+    var label='цена '+pct(r.price,1),priceX=Math.min(catW+12,LW-110);
+    if(catW+12>LW-110){category.textContent=r.cat;category.setAttribute('textLength',LW-122);category.setAttribute('lengthAdjust','spacingAndGlyphs')}
+    el('rect',{x:priceX-5,y:sy-12,width:104,height:18,rx:5,fill:'#FFF0F5'},group);
+    txt(group,priceX,sy,label,{'font-size':11.5,'font-weight':650,fill:'#BB1243'});
+    if(r.before)el('path',{d:hbar(X(0),X(r.before),yc-10,8,3),fill:PC.before},group);
+    if(r.after)el('path',{d:hbar(X(0),X(r.after),yc+3,8,3),fill:PC.after},group);
+    var d=r.after-r.before;
+    txt(group,W-VW+4,yc-1,r.before+' → '+r.after,{'font-size':13,'font-weight':650,fill:'#25392C'});
+    txt(group,W-VW+4,yc+16,(d>0?'+':'')+d,{'font-size':12,'font-weight':650,fill:d>0?'#C31247':d<0?'#1E8A4A':'#65776B'});
+    y+=item.h;
+  });
+}
+
+function pairChart(box, rows){
+  var W=553, LW=190, VW=110, top=4, bot=8, n=rows.length, rowH=Math.min(23,(430-top-bot)/n), H=top+bot+rowH*n;
+  var hi=Math.max.apply(null,rows.map(function(r){return Math.max(r.before,r.after);}));
+  var X=function(v){ return LW+v/hi*(W-LW-VW-8); };
+  var svg=el('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H},null), bh=Math.min(9,(rowH-7)/2);
+  rows.forEach(function(r,i){
+    var y=top+i*rowH, yc=y+rowH/2;
+    if(i%2===0) el('rect',{x:0,y:y,width:W,height:rowH,fill:'#F7FAF8'},svg);
+    var nm=r.name==='Сухофрукты. Сушеные грибы, ягоды. Орехи'?'Сухофрукты, грибы, орехи':r.name;
+    el('title',{},txt(svg,LW-8,yc+4,nm,{'text-anchor':'end',fill:C.ink,'font-size':12})).textContent=r.name;
+    if(r.before) el('path',{d:hbar(X(0),X(r.before),yc-bh-1,bh,3),fill:PC.before},svg);
+    if(r.after) el('path',{d:hbar(X(0),X(r.after),yc+1,bh,3),fill:PC.after},svg);
+    var t=el('text',{x:W-VW+6,y:yc+4,'font-size':12,fill:C.ink},svg);
+    var t1=el('tspan',{'font-weight':700},t); t1.textContent=r.before+' → '+r.after;
+    var d=r.after-r.before, t2=el('tspan',{fill:d>0?C.berry:d<0?'#1E8A4A':C.muted,'font-weight':600},t);
+    t2.textContent='  '+(r.before?pct(r.after/r.before-1,0):(d>0?'нов.':''));
+  });
+  el('line',{x1:X(0),x2:X(0),y1:top,y2:H-bot,stroke:C.axis},svg);
+  box.appendChild(svg);
+}
+
+// 8. Итоги октября по каналам — карточка на каждую метрику
+curGroup='Итоги октября';
+slide('Прогноз и факт: онлайн и офлайн','Эффект повышения цен к базе за октябрь 2026',function(b){
+  var p2=function(v){return pct(v,2);};
+  var M=[
+    {t:'Изменение средневзвешенной цены', kind:'pct', main:'price_pct', lines:function(x){ return [p2(x.price_pct), isNum(x.cur_price)?num(x.cur_price,1)+' → '+num(x.new_price,1)+' ₽':null]; }},
+    {t:'Δ выручки', kind:'rub', main:'rev_rub', sec:'rev_pct', lines:function(x){ return [rub(x.rev_rub), p2(x.rev_pct)]; }},
+    {t:'Δ грязной маржи', kind:'rub', main:'gm_rub', sec:'gm_pct', lines:function(x){ return [rub(x.gm_rub), p2(x.gm_pct)]; }},
+    {t:'Продажи в штуках', kind:'pct', main:'units_pct', lines:function(x){ return [p2(x.units_pct), isNum(x.units)?units(x.units):null]; }}];
+  function block(lbl, color, x, m, cls){
+    var vals=isNum(x[m.main])?m.lines(x).filter(function(v){ return v!=null && v!=='—'; }):[];
+    return '<div class="mrow"><span class="k">'+sw(color)+lbl+'</span><div class="mvals'+(cls?' '+cls:'')+'">'+
+      (vals.length?vals.map(function(v,i){ return '<div class="'+(i?'value-secondary':'value-primary')+'">'+(i?v:esc(v).replace(/ (млн ₽|млрд ₽|тыс ₽|₽)$/, '<span class="number-unit"> $1</span>'))+'</div>'; }).join(''):'<div class="wait">ожидается</div>')+'</div></div>';
+  }
+  b.innerHTML='<div class="two-ch">'+CH.map(function(c){
+    var p=FC.totals[c.k], f=fTot(c.k);
+    return '<div class="ch-panel"><div class="ch-head"><h2><span class="ch-badge">'+c.icon+'</span>'+c.name+'</h2>'+
+      '<div class="ch-meta">'+num(p.sku,0)+' товаров<br>переоценка '+c.date+'</div></div>'+
+      '<div class="mgrid">'+M.map(function(m){
+        var d=dev(p[m.main],f[m.main],m.kind), d2=m.sec?dev(p[m.sec],f[m.sec],'pct'):null;
+        var devTxt=d.cls==='wait'?'<span class="wait">отклонение — после факта</span>':
+          '<span class="'+d.cls+'">'+d.t+'</span>'+(d2&&d2.cls!=='wait'?' <span class="'+d2.cls+'">· '+d2.t.replace(/^[▲▼] /,'')+'</span>':'');
+        return '<div class="mcard"><div class="mt">'+m.t+'</div>'+
+          block('Прогноз',C.fc,p,m,'')+block('Факт',C.fact,f,m,'a')+
+          '<div class="mdev">'+devTxt+'</div></div>';
+      }).join('')+'</div></div>';
+  }).join('')+'</div>';
+});
+
+// 9–11. Категории: онлайн и офлайн отдельными карточками, по слайду на метрику
+function chGet(ch, key){ return function(name){
+  var c=CAT[name][ch]; if(!isNum(c.sku)||c.sku<=0) return null;
+  return {fc:c[key], fa:fCat(name,ch)[key], sub:num(c.sku,0)+' · '+pct(c.price_pct,2),
+          tip:'Товаров с новой ценой: '+num(c.sku,0)+' · цена '+pct(c.price_pct,2)}; }; }
+function totGet(key){ return function(name){
+  var c=CAT[name].total; if(!isNum(c.sku)||c.sku<=0) return null;
+  var fa=fCat(name,'total')[key];
+  if(!isNum(fa) && key.slice(-4)==='_rub'){ var a=fCat(name,'online')[key], b2=fCat(name,'offline')[key];
+    if(isNum(a)||isNum(b2)) fa=(isNum(a)?a:0)+(isNum(b2)?b2:0); }
+  return {fc:c[key], fa:fa}; }; }
+function catList(sortKey){
+  return FC.cats.filter(function(c){ return isNum(c.total.sku)&&c.total.sku>0; })
+    .sort(function(a,b){ return Math.abs(b.total[sortKey])-Math.abs(a.total[sortKey]); });
+}
+function mln(v){ if(!isNum(v)) return '—'; var r=Math.round(v/1e5)/10; return sgn(r)+num(Math.abs(r),1); }
+function pnum(v){ if(!isNum(v)) return '—'; var r=Math.round(v*1e4)/100; return sgn(r)+num(Math.abs(r),2); }
+var METRICS=[
+  {key:'rev_rub', title:'Δ выручки по категориям', short:'Δ выручки', unit:'млн ₽', k:1e-6, kind:'rub', fmt:mln, tfmt:rub},
+  {key:'gm_rub', title:'Δ грязной маржи по категориям', short:'Δ грязной маржи', unit:'млн ₽', k:1e-6, kind:'rub', fmt:mln, tfmt:rub},
+  {key:'units_pct', title:'Изменение продаж в штуках по категориям', short:'Продажи в штуках', unit:'%', k:100, axisDec:1, tick:'%', kind:'pct', fmt:pnum, tfmt:function(v){return pct(v,2);}}];
+function legend(hint){ return '<div class="chart-top"><div class="legend"><span><i style="background:'+C.fc+'"></i>Прогноз</span>'+
+  '<span><i style="background:'+C.fact+'"></i>Факт</span><span><i class="dash"></i>Факт ожидается</span></div>'+
+  '<div class="hint">'+hint+'</div></div>'; }
+curGroup='Категории';
+if(SHOW_CATS) METRICS.forEach(function(M){
+  slide(M.title,'Октябрь 2026 · '+M.unit+' · по величине прогноза',function(b){
+    var rows=catList(M.key).map(function(c){ return {name:c.name}; });
+    var panels=CH.map(function(c){ return {get:chGet(c.k,M.key), k:M.k, axisDec:M.axisDec, tick:M.tick, kind:M.kind, fmt:M.fmt, tfmt:M.tfmt}; });
+    var dom=catDomain(rows,panels);
+    b.innerHTML=legend('Товары, изменение цены и точные значения — при наведении')+
+      '<div class="ch-panel chart-shell"><div class="chart" id="cc-channels"></div></div>';
+    panels.forEach(function(p,i){p.title=CH[i].name+' · '+M.unit});
+    multiChart(b.querySelector('#cc-channels'),{width:1170,height:512,labelW:226,valueW:174,domain:dom,
+      rows:rows,panels:panels});
+  });
+});
+
+// 12. Итого онлайн + офлайн: все метрики на одном слайде
+if(SHOW_CATS) slide('Итого онлайн + офлайн по категориям','Октябрь 2026 · сумма двух каналов · по величине прогноза Δ грязной маржи',function(b){
+  b.innerHTML=legend('Товары, изменение цены и точные значения — при наведении')+
+    '<div class="ch-panel chart-shell"><div class="chart" id="cc"></div></div>';
+  multiChart(b.querySelector('#cc'),{width:1170,height:512,labelW:300,valueW:142,summary:true,
+    rows:catList('gm_rub').map(function(c){ return {name:c.name, meta:num(c.total.sku,0)+' · '+pct(c.total.price_pct,2)}; }),
+    panels:METRICS.map(function(M){ return {title:M.short+', '+M.unit, get:totGet(M.key), k:M.k, axisDec:M.axisDec, tick:M.tick, kind:M.kind, fmt:M.fmt, tfmt:M.tfmt}; })});
+});
+
+// 10. Выводы
+curGroup='Итоги';
+slide('Выводы','По результатам октября 2026 · до — 21.09–11.10, после — 12.10–01.11',function(b){
+  var W=POST.bdr, pre=W.filter(function(w){return w.week<=909;}), last=W[W.length-1];
+  var A=function(k){ return avg(pre.map(function(w){return w[k];})); };
+  var C2=POST.compl, S=C2.stat, wk=C2.weeks, sum=function(ws,k){ return wk.filter(function(w){return ws.indexOf(w.week)>=0;}).reduce(function(s,w){return s+w[k];},0); };
+  var ix=C2.index, iv=function(w){ return ix.filter(function(r){return r.week===w;})[0].cur; };
+  var ia=function(ws,k){ return avg(ix.filter(function(r){return ws.indexOf(r.week)>=0;}).map(function(r){return r[k];})); };
+  var dRC=(last.rc_share-A('rc_share'))*100, a0=sum(C2.before,'all'), a1=sum(C2.after,'all'), i1=ia(C2.after,'cur'), p1=ia(C2.after,'prev');
+  var blocks=[
+    {cls:'', k:'Маржа и выручка', t:'Метрики выросли, маржа лучше ожидаемого', v:pp(dRC,2), vs:'доля ГМ по себестоимости РЦ · ожидали +0,345 п.п.',
+     li:['Рост доли ГМ по себестоимости РЦ в <b>'+num(dRC/0.345,1)+' раза</b> выше ожидаемого',
+         'Выручка в неделю <b>'+pct(chg(A('rev'),last.rev),1)+'</b>, грязная маржа <b>'+pct(chg(A('gm'),last.gm),1)+'</b>',
+         'Доля грязной маржи <b>'+pp((last.gm_share-A('gm_share'))*100,2)+'</b>, доля маржи после скидок <b>'+pp((last.ad_share-A('ad_share'))*100,2)+'</b>'],
+     f:'Результат промежуточный: финальные значения увидим в ноябре, при новой доле себестоимости'},
+    {cls:'b2', k:'Жалобы на высокую цену', t:'Обращения выросли, но в рамках общей тенденции', v:num(i1,3), vs:'жалоб на 10 тыс. продаж · год назад '+num(p1,3),
+     li:['Жалоб на высокую цену <b>'+pct(chg(a0,a1),0)+'</b>, причём по остальным товарам тоже <b>'+pct(chg(S.oth_b,S.oth_a),0)+'</b>',
+         'Уровень в <b>'+num(p1/i1,1)+' раза</b> ниже прошлого года',
+         'Начали затухать: <b>'+[910,911,912].map(function(w){ return num(iv(w),3); }).join(' → ')+'</b> на 10 тыс. продаж'],
+     f:'Продолжаем следить за динамикой жалоб'}];
+  b.innerHTML='<div class="concl2">'+blocks.map(function(x,i){
+    return '<div class="cb '+x.cls+'"><div class="cb-h"><div class="cb-k"><span>'+(i+1)+'</span>'+x.k+'</div><h3>'+x.t+'</h3>'+
+      '<div class="cb-v">'+x.v+'</div><div class="cb-vs">'+x.vs+'</div></div>'+
+      '<ul>'+x.li.map(function(l){ return '<li>'+l+'</li>'; }).join('')+'</ul>'+
+      '<div class="cb-f"><i>◔</i>'+x.f+'</div></div>';
+  }).join('')+'</div>';
+});
+}
+
+// ─── тестовый факт ─────────────────────────────────────────────────────────
+function makeDemo(){
+  var s=7; function rnd(){ s=(s*16807)%2147483647; return s/2147483647; }
+  function sc(o){ var r={}, k=0.55+rnd()*0.65;
+    ['rev_rub','rev_pct','gm_rub','gm_pct','share_pp'].forEach(function(f){ if(isNum(o[f])) r[f]=o[f]*(k+(rnd()-.5)*.1); });
+    if(isNum(o.price_pct)) r.price_pct=o.price_pct*(0.9+rnd()*0.2);
+    if(isNum(o.units_pct)) r.units_pct=o.units_pct*(0.7+rnd()*1.2);
+    if(isNum(o.units)) r.units=o.units*(0.7+rnd()*1.2);
+    return r; }
+  var cats={}; FC.cats.forEach(function(c){ var on=sc(c.online), off=sc(c.offline), t=sc(c.total);
+    ['rev_rub','gm_rub'].forEach(function(f){ t[f]=(on[f]||0)+(off[f]||0); }); cats[c.name]={online:on, offline:off, total:t}; });
+  return {totals:{online:sc(FC.totals.online), offline:sc(FC.totals.offline)}, cats:cats};
+}
+
+// ═══ навигация: слайды друг под другом, содержание слева ═══════════════════
+var main=document.getElementById('main'), navList=document.getElementById('navList'), side=document.getElementById('side');
+document.getElementById('sideLogo').src=A.logo;
+var wraps=[], items=[], cur=0;
+function render(){
+  SLIDES=[]; curGroup=''; define();
+  main.innerHTML=''; navList.innerHTML=''; wraps=[]; items=[]; var lastGroup=null;
+  SLIDES.forEach(function(s,i){
+    var wrap=document.createElement('div'); wrap.className='sl-wrap';
+    var holder=document.createElement('div'); holder.className='deck'; holder.appendChild(frame(s,i)); wrap.appendChild(holder);
+    main.appendChild(wrap); wraps.push(wrap);
+    if(s.group && s.group!==lastGroup){ var g=document.createElement('div'); g.className='nav-group'; g.textContent=s.group; navList.appendChild(g); lastGroup=s.group; }
+    var it=document.createElement('button'); it.className='nav-item'; it.title=s.title;
+    it.innerHTML='<span class="nav-num">'+(i+1)+'</span><span class="nav-label">'+esc(s.title)+'</span>';
+    it.onclick=function(){ go(i); }; navList.appendChild(it); items.push(it);
+  });
+  var pad=document.createElement('div'); pad.className='sl-pad'; main.appendChild(pad);
+  wraps.forEach(function(wr){ var sec=wr.firstChild.firstChild, b=sec.querySelector('.body'), H=720;
+    if(b && b.scrollHeight>b.clientHeight+2) H=720+(b.scrollHeight-b.clientHeight)+12;
+    wr.H=H; wr.firstChild.style.height=H+'px'; sec.style.height=H+'px'; });
+  document.getElementById('demo').classList.toggle('on',DEMO);
+}
+function fit(){
+  var w=main.clientWidth, h=main.clientHeight; if(!w||!h) return;
+  var k=Math.min((w-32)/1280,(h-32)/720); if(!(k>0)) return;
+  wraps.forEach(function(wr){ wr.style.width=(1280*k)+'px'; wr.style.height=((wr.H||720)*k)+'px'; wr.style.margin='16px auto 0';
+    wr.firstChild.style.transform='scale('+k+')'; });
+}
+function setActive(i){
+  cur=i; items.forEach(function(it,j){ it.classList.toggle('active',j===i); });
+  document.getElementById('progress').style.width=((i+1)/wraps.length*100)+'%';
+  var a=items[i], top=a.offsetTop, nl=navList;
+  if(top<nl.scrollTop+40||top>nl.scrollTop+nl.clientHeight-60) nl.scrollTop=top-nl.clientHeight/2;
+  try{ history.replaceState(null,'','#'+(i+1)); }catch(e){}
+}
+function go(i, instant){ i=Math.max(0,Math.min(wraps.length-1,i));
+  var wr=wraps[i], y=wr.offsetHeight>main.clientHeight-32 ? wr.offsetTop-16 : wr.offsetTop-(main.clientHeight-wr.offsetHeight)/2;
+  main.scrollTo({top:Math.max(0,y),behavior:instant?'instant':'smooth'}); setActive(i); }
+var ticking=false, booted=false;
+main.addEventListener('scroll',function(){ if(ticking) return; ticking=true; requestAnimationFrame(function(){
+  ticking=false; var mid=main.scrollTop+main.clientHeight/2, best=0, bd=1e9;
+  wraps.forEach(function(wr,j){ var d=(mid>=wr.offsetTop&&mid<=wr.offsetTop+wr.offsetHeight)?-1:Math.abs(wr.offsetTop+wr.offsetHeight/2-mid); if(d<bd){bd=d;best=j;} });
+  if(booted&&best!==cur) setActive(best); }); });
+if(window.ResizeObserver) new ResizeObserver(function(){ fit(); }).observe(main);
+document.getElementById('navToggle').onclick=function(){ side.classList.toggle('collapsed'); document.body.classList.toggle('nav-collapsed'); setTimeout(fit,280); };
+document.getElementById('fs').onclick=function(){ var d=document.documentElement; if(!document.fullscreenElement){ (d.requestFullscreen||function(){}).call(d); } else document.exitFullscreen(); };
+document.getElementById('pr').onclick=function(){ window.print(); };
+document.getElementById('demo').onclick=function(){ DEMO=!DEMO; FACT=DEMO?makeDemo():REAL; var c=cur; render(); fit(); go(c,true); };
+document.addEventListener('keydown',function(e){
+  var w=wraps[cur], st=main.scrollTop, vh=main.clientHeight;
+  if(['ArrowDown','PageDown',' ','ArrowRight'].indexOf(e.key)>=0){ e.preventDefault();
+    if(w && w.offsetTop+w.offsetHeight>st+vh+4) main.scrollTo({top:Math.min(st+vh*0.8, w.offsetTop+w.offsetHeight-vh+16),behavior:'smooth'}); else go(cur+1); }
+  else if(['ArrowUp','PageUp','ArrowLeft'].indexOf(e.key)>=0){ e.preventDefault();
+    if(w && w.offsetTop<st-20) main.scrollTo({top:Math.max(st-vh*0.8, w.offsetTop-16),behavior:'smooth'}); else go(cur-1); }
+  else if(e.key==='Home'){ e.preventDefault(); go(0); } else if(e.key==='End'){ e.preventDefault(); go(wraps.length-1); }
+  else if(e.key==='f'||e.key==='F'||e.key==='а'||e.key==='А') document.getElementById('fs').click();
+});
+window.addEventListener('resize',fit);
+var h0=parseInt((location.hash||'').slice(1),10);
+render();
+if(window.innerWidth<900){ side.classList.add('collapsed'); document.body.classList.add('nav-collapsed'); }
+fit(); setActive(0);
+function boot(){ fit(); go(isNaN(h0)?0:h0-1, true); setTimeout(function(){ booted=true; },400); }
+boot(); window.addEventListener('load',boot);
+})();
+</script>
+</body>
+</html>
